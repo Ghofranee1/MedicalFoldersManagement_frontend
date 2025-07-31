@@ -1,0 +1,205 @@
+.patient-detail-container {
+    padding: 30px;
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.detail-header h2 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #7f8c8d;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background-color: #ecf0f1;
+    color: #e74c3c;
+}
+
+.patient-info-section {
+    margin-bottom: 30px;
+}
+
+.patient-main-info {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.patient-photo {
+    flex-shrink: 0;
+}
+
+.patient-photo img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #3498db;
+}
+
+.patient-photo.placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #3498db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 48px;
+}
+
+.patient-details {
+    flex: 1;
+}
+
+.patient-details h3 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+}
+
+.arabic-name {
+    color: #7f8c8d;
+    font-size: 16px;
+    direction: rtl;
+    margin-bottom: 15px;
+}
+
+.patient-badges {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.info-item label {
+    color: #7f8c8d;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.info-item span {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.dossiers-section h3 {
+    color: #2c3e50;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dossiers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.dossier-card {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dossier-card:hover {
+    border-color: #3498db;
+    background-color: white;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+}
+
+.dossier-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.dossier-header h4 {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.dossier-id {
+    color: #7f8c8d;
+    font-size: 12px;
+    background-color: #e9ecef;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.dossier-info {
+    display: grid;
+    gap: 8px;
+}
+
+.no-dossiers {
+    text-align: center;
+    padding: 40px 20px;
+    color: #7f8c8d;
+}
+
+.no-dossiers i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: #bdc3c7;
+}
+
+.dossier-detail-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+    padding: 20px;
+}
+
+.dossier-detail-panel {
+    background: white;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}

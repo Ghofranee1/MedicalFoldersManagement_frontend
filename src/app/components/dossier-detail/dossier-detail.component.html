@@ -1,0 +1,97 @@
+<div class="dossier-detail-container">
+    <div class="detail-header">
+        <h2>Détails du Dossier Médical</h2>
+        <button class="close-btn" (click)="onClose()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        Chargement du dossier...
+    </div>
+
+    <div *ngIf="error" class="error-message">
+        {{ error }}
+    </div>
+
+    <div *ngIf="!loading && !error && fullDossier" class="dossier-content">
+        <div class="dossier-info-section">
+            <div class="dossier-header-info">
+                <h3>{{ fullDossier.departement?.libelleFr }}</h3>
+                <p class="dossier-id">ID: {{ fullDossier.id }}</p>
+                <p class="creation-date">Créé le: {{ fullDossier.dateCreation | date:'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+
+            <div class="patient-summary" *ngIf="fullDossier.patient">
+                <h4>Informations du Patient</h4>
+                <div class="patient-info-grid">
+                    <div class="info-item">
+                        <label>Nom:</label>
+                        <span>{{ fullDossier.patient.nomFr }} {{ fullDossier.patient.prenomFr }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>IPP:</label>
+                        <span>{{ fullDossier.patient.ipp }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Date de naissance:</label>
+                        <span>{{ fullDossier.patient.dateNaissance | date:'dd/MM/yyyy' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Sexe:</label>
+                        <span>{{ fullDossier.patient.sexe }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fichiers-section">
+            <h3>Fichiers Médicaux ({{ fullDossier.fichiers?.length || 0 }})</h3>
+
+            <div *ngIf="fullDossier.fichiers && fullDossier.fichiers.length > 0" class="fichiers-grid">
+                <div *ngFor="let fichier of fullDossier.fichiers" class="fichier-card">
+                    <div class="fichier-header">
+                        <i [class]="getFileIcon(fichier.fileName)"></i>
+                        <div class="fichier-info">
+                            <h4>{{ fichier.originalFileName || fichier.fileName }}</h4>
+                            <p class="fichier-type" *ngIf="fichier.typeFichier">{{ fichier.typeFichier.nom }}</p>
+                        </div>
+                    </div>
+
+                    <div class="fichier-details">
+                        <div class="detail-row">
+                            <span class="label">Date d'ajout:</span>
+                            <span class="value">{{ fichier.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Type:</span>
+                            <span class="value">{{ fichier.isInternal ? 'Interne' : 'Externe' }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Taille:</span>
+                            <span class="value">{{ getFileSize(fichier.filePath) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="fichier-actions">
+                        <!--
+                        <button class="btn btn-primary" (click)="downloadFile(fichier.filePath)">
+                            <i class="fas fa-download"></i>
+                            Télécharger
+                        </button>
+                    -->
+                        <button class="btn btn-primary" (click)="downloadFile(fichier.id)">
+                            <i class="fas fa-download"></i> Télécharger
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="!fullDossier.fichiers || fullDossier.fichiers.length === 0" class="no-fichiers">
+                <i class="fas fa-file-medical"></i>
+                <p>Aucun fichier médical dans ce dossier</p>
+            </div>
+        </div>
+    </div>
+</div>

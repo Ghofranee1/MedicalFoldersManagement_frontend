@@ -1,0 +1,21 @@
+<nav class="navbar">
+    <div class="nav-brand">
+        <i class="fas fa-hospital-alt"></i>
+        <span>Gestion Dossiers Médicaux</span>
+    </div>
+
+    <ul class="nav-menu">
+        <li class="nav-item">
+            <a routerLink="/dashboard" class="nav-link" [class.active]="isActiveRoute('/dashboard')">
+                <i class="fas fa-tachometer-alt"></i>
+                Tableau de Bord
+            </a>
+        </li>
+        <li class="nav-item">
+            <a routerLink="/patients" class="nav-link" [class.active]="isActiveRoute('/patients')">
+                <i class="fas fa-users"></i>
+                Patients
+            </a>
+        </li>
+    </ul>
+</nav>

@@ -1,0 +1,333 @@
+.dossier-detail-container {
+    padding: 30px;
+}
+
+.dossier-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.dossier-info-section {
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+}
+
+.dossier-header-info h3 {
+    color: #2c3e50;
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+}
+
+.dossier-id {
+    color: #7f8c8d;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.creation-date {
+    color: #7f8c8d;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.patient-summary {
+    border-top: 1px solid #e9ecef;
+    padding-top: 20px;
+}
+
+.patient-summary h4 {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.patient-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.fichiers-section h3 {
+    color: #2c3e50;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fichiers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.fichier-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.fichier-card:hover {
+    border-color: #3498db;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+}
+
+.fichier-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.fichier-header i {
+    font-size: 2rem;
+    color: #e74c3c;
+}
+
+.fichier-header i.fa-file-pdf {
+    color: #dc3545;
+}
+
+.fichier-header i.fa-file-word {
+    color: #007bff;
+}
+
+.fichier-header i.fa-file-image {
+    color: #28a745;
+}
+
+.fichier-header i.fa-file-excel {
+    color: #198754;
+}
+
+.fichier-info h4 {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    word-break: break-word;
+}
+
+.fichier-type {
+    color: #7f8c8d;
+    font-size: 12px;
+    background-color: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.fichier-details {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.detail-row .label {
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.detail-row .value {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.fichier-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.no-fichiers {
+    text-align: center;
+    padding: 40px 20px;
+    color: #7f8c8d;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #dee2e6;
+}
+
+.no-fichiers i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: #bdc3c7;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 15px;
+    }
+
+    .navbar {
+        padding: 0 15px;
+    }
+
+    .nav-menu {
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: #2c3e50;
+        display: none;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .patients-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .patient-main-info {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dossiers-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fichiers-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .patient-detail-overlay,
+    .dossier-detail-overlay {
+        padding: 10px;
+    }
+
+    .patient-detail-panel,
+    .dossier-detail-panel {
+        max-height: 95vh;
+    }
+
+    .patient-detail-container,
+    .dossier-detail-container {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-header h1 {
+        font-size: 2rem;
+    }
+
+    .dashboard-header p {
+        font-size: 1rem;
+    }
+
+    .search-input {
+        padding: 12px 40px 12px 12px;
+        font-size: 14px;
+    }
+
+    .patient-card {
+        padding: 15px;
+    }
+
+    .stat-card {
+        padding: 20px;
+    }
+
+    .stat-info h3 {
+        font-size: 1.5rem;
+    }
+
+    .fichier-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}
+
+/* Animation for smooth transitions */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.patient-card,
+.dossier-card,
+.fichier-card,
+.stat-card {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Print styles */
+@media print {
+
+    .navbar,
+    .close-btn,
+    .fichier-actions,
+    .btn {
+        display: none !important;
+    }
+
+    .main-content {
+        margin-top: 0;
+        padding: 0;
+    }
+
+    .patient-detail-container,
+    .dossier-detail-container {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}

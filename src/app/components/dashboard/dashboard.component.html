@@ -1,0 +1,109 @@
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Tableau de Bord</h1>
+        <p>Gestion des Dossiers Médicaux</p>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        Chargement des données...
+    </div>
+
+    <div *ngIf="error" class="error-message">
+        {{ error }}
+    </div>
+
+    <div *ngIf="!loading && !error" class="dashboard-content">
+        <!-- Statistics Cards -->
+        <div class="stats-grid" *ngIf="statistics">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-folder-medical"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ statistics.totalDossiers }}</h3>
+                    <p>Dossiers Médicaux</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-file-medical"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ statistics.totalFichiers }}</h3>
+                    <p>Fichiers Médicaux</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-hospital"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ departements?.length }}</h3>
+                    <p>Départements</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ recentPatients?.length }}</h3>
+                    <p>Patients Récents</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Dossiers par Département -->
+            <div class="dashboard-section">
+                <h2>Dossiers par Département</h2>
+                <div class="departement-stats" *ngIf="statistics?.dossiersParDepartement">
+                    <div *ngFor="let dept of statistics?.dossiersParDepartement || []" class="departement-item">
+                        <div class="departement-info">
+                            <span class="departement-name">{{ dept.departementNom }}</span>
+                            <span class="departement-count">{{ dept.nombreDossiers }}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill"
+                                [style.width.%]="(dept.nombreDossiers / statistics!.totalDossiers) * 100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dossiers par Mois -->
+            <div class="dashboard-section">
+                <h2>Dossiers Créés par Mois</h2>
+                <div class="monthly-stats" *ngIf="statistics?.dossiersParMois">
+                    <div *ngFor="let month of statistics?.dossiersParMois" class="month-item">
+                        <span class="month-name">{{ getMonthName(month.mois) }} {{ month.annee }}</span>
+                        <span class="month-count">{{ month.nombreDossiers }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patients Récents -->
+            <div class="dashboard-section">
+                <h2>Patients Récents</h2>
+                <div class="recent-patients">
+                    <div *ngIf="(recentPatients?.length || 0) > 0">
+                    <div *ngFor="let patient of recentPatients" class="patient-item">
+                        <div class="patient-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="patient-info">
+                            <h4>{{ patient.nomFr }} {{ patient.prenomFr }}</h4>
+                            <p>IPP: {{ patient.ipp }}</p>
+                            <p>{{ patient.dossiers?.length || 0 }} dossier(s)</p>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

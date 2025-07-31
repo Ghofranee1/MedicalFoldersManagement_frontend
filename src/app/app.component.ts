@@ -1,12 +1,19 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { NavigationComponent } from "./components/navigation/navigation.component";
+import { AppRoutingModule } from "./app-routing.module";
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
+  standalone: true,
+  imports: [RouterModule, NavigationComponent /*, AppRoutingModule*/],
+  template: `
+    <app-navigation></app-navigation>
+    <router-outlet></router-outlet>
+  `
 })
 export class AppComponent {
-  title = 'MFM_frontend';
+  title = 'medical-folders-management';
 }

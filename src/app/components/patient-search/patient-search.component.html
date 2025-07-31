@@ -1,0 +1,79 @@
+<div class="patient-search-container">
+    <div class="search-header">
+        <h2>Recherche de Patients</h2>
+        <form [formGroup]="searchForm" class="search-form">
+            <div class="search-input-group">
+                <input type="text" formControlName="searchTerm" placeholder="Rechercher par nom, prénom ou IPP..."
+                    class="search-input">
+                <i class="search-icon fas fa-search"></i>
+            </div>
+        </form>
+    </div>
+
+    <div class="search-results">
+        <div *ngIf="loading" class="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            Chargement...
+        </div>
+
+        <div *ngIf="error" class="error-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            {{ error }}
+        </div>
+
+        <div *ngIf="!loading && !error" class="patients-grid">
+            <div *ngFor="let patient of patients" class="patient-card"
+                [class.selected]="selectedPatient?.ipp === patient.ipp" (click)="selectPatient(patient)">
+                <div class="patient-header">
+                    <div class="patient-name">
+                        <h3>{{ patient.nomFr }} {{ patient.prenomFr }}</h3>
+                        <p class="patient-name-ar" *ngIf="patient.nomAr">{{ patient.nomAr }} {{ patient.prenomAr }}</p>
+                    </div>
+                    <div class="patient-badges">
+                        <span class="badge badge-vip" *ngIf="patient.statutVip">VIP</span>
+                        <span class="badge badge-confidential" *ngIf="patient.isConfidential">Confidentiel</span>
+                    </div>
+                </div>
+
+                <div class="patient-info">
+                    <div class="info-row">
+                        <span class="label">IPP:</span>
+                        <span class="value">{{ patient.ipp }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Date de naissance:</span>
+                        <span class="value">{{ patient.dateNaissance | date:'dd/MM/yyyy' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Âge:</span>
+                        <span class="value">{{ getPatientAge(patient.dateNaissance) }} ans</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Sexe:</span>
+                        <span class="value">{{ patient.sexe }}</span>
+                    </div>
+                    <div class="info-row" *ngIf="patient.phone1">
+                        <span class="label">Téléphone:</span>
+                        <span class="value">{{ patient.phone1 }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Dossiers:</span>
+                        <span class="value">{{ patient.dossiers?.length || 0 }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!loading && !error && patients?.length === 0" class="no-results">
+            <i class="fas fa-search"></i>
+            <p>Aucun patient trouvé</p>
+        </div>
+    </div>
+
+    <!-- Patient Details Modal/Panel -->
+    <div *ngIf="selectedPatient" class="patient-detail-overlay" (click)="clearSelection()">
+        <div class="patient-detail-panel" (click)="$event.stopPropagation()">
+            <app-patient-detail [patient]="selectedPatient" (close)="clearSelection()"></app-patient-detail>
+        </div>
+    </div>
+</div>
