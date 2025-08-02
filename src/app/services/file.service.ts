@@ -37,13 +37,14 @@ export interface FileInfo {
   providedIn: 'root'
 })
 export class FileService {
-  private readonly apiUrl = `${environment.apiUrl}/api/files`;
+  private readonly apiUrl = `${environment.apiUrl}/api/file`;
 
   constructor(private http: HttpClient) {}
 
   /**
    * Upload a single file with metadata
    */
+  /*
   uploadFile(fileData: FileUploadData): Observable<FileUploadResponse> {
     const formData = new FormData();
     
@@ -65,7 +66,16 @@ export class FileService {
         catchError(this.handleError)
       );
   }
-
+*/
+  
+  uploadFile(formData: FormData): Observable<any> {
+    // Don't set Content-Type header - let the browser set it automatically for FormData
+    // This ensures proper multipart/form-data boundary is set
+    return this.http.post(`${this.apiUrl}/upload`, formData, {
+      reportProgress: true,
+      observe: 'events'
+    });
+  }
   /**
    * Upload a file with progress tracking
    */
@@ -107,6 +117,7 @@ export class FileService {
   /**
    * Upload multiple files
    */
+  /*
   uploadMultipleFiles(filesData: FileUploadData[]): Observable<FileUploadResponse[]> {
     const uploadObservables = filesData.map(fileData => this.uploadFile(fileData));
     
@@ -122,7 +133,7 @@ export class FileService {
         });
     });
   }
-
+*/
   /**
    * Download a file by its path
    */

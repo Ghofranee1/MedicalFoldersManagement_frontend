@@ -127,7 +127,7 @@ export class DossierMedicalService {
 
   // Download file by ID (if you have this functionality)
   downloadFileById(fileId: number): Observable<Blob> {
-    return this.http.get(`${environment.apiUrl}/api/files/download/${fileId}`, {
+    return this.http.get(`${environment.apiUrl}/api/file/download/${fileId}`, {
       responseType: 'blob'
     });
   }

@@ -21,7 +21,7 @@ import { LoginComponent } from './components/auth/login/login.component';
   `,
   styleUrls: ['./app.component.css'],
   standalone: true,
-  imports: [RouterOutlet, NavigationComponent, CommonModule],
+  imports: [RouterOutlet, CommonModule],
   
 })
   

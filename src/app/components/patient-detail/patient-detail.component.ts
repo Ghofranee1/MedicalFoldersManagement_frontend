@@ -101,7 +101,8 @@ export class PatientDetailComponent implements OnInit {
   creatingDossier = false;
   //archivistDepartmentId: number | undefined = 1; // This should come from your auth service
   currentUserDepartmentId: number = 0; // This should come from your auth service
-
+  dossierDetailLoading = false;
+  dossierDetailError: string | null = null;
   constructor(private dossierService: DossierMedicalService, private authService: AuthService
   ) {
     
@@ -160,7 +161,7 @@ export class PatientDetailComponent implements OnInit {
     this.dossierService.getDossiersByPatient(this.patient.ipp).subscribe({
       next: (response) => {
         this.dossiers = response.data;
-        this.dossier = this.dossiers[0];
+        //this.dossier = this.dossiers[0];
         console.log('le premier dossier du patient est', this.dossier);
         this.loading = false;
         console.log('les dossiers du patient d ipp ', this.patient.ipp, 'est', this.dossiers);

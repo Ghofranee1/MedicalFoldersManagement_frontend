@@ -96,7 +96,7 @@ export const routes: Routes = [
 
 */
 
-
+/*
 
 import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
@@ -175,6 +175,7 @@ export const routes: Routes = [
         canActivate: [RoleGuard],
         data: { allowedRoles: [UserRole.Archivist] }
       },
+      
     ]
   },
 
@@ -187,5 +188,120 @@ export const routes: Routes = [
   {
     path: '**',
     redirectTo: '/login'
+  }
+];
+*/
+
+
+import { Routes } from '@angular/router';
+import { AuthGuard } from './guards/auth.guard';
+import { RoleGuard } from './guards/role.guard';
+import { UserRole } from './models/user.model';
+
+// Import components
+import { LoginComponent } from './components/auth/login/login.component';
+import { RegisterComponent } from './components/auth/register/register.component';
+import { LayoutComponent } from './components/layout/layout.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { PatientSearchComponent } from './components/patient-search/patient-search.component';
+import { PatientDetailComponent } from './components/patient-detail/patient-detail.component';
+import { DossierDetailComponent } from './components/dossier-detail/dossier-detail.component';
+import { FileUploadComponent } from './components/file-upload/file-upload.component';
+import { UnauthorizedComponent } from './components/unauthorized/unauthorized/unauthorized.component';
+
+export const routes: Routes = [
+  // Public routes (no layout)
+  {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: 'register',
+    component: RegisterComponent
+  },
+  {
+    path: 'unauthorized',
+    component: UnauthorizedComponent
+  },
+
+  // Protected routes (with layout)
+  {
+    path: '',
+    component: LayoutComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'dashboard',
+        component: DashboardComponent
+      },
+      {
+        path: 'patients/search',
+        component: PatientSearchComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: [UserRole.Doctor, UserRole.Archivist] }
+      },
+      {
+        path: 'patients/:ipp',
+        component: PatientDetailComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: [UserRole.Doctor, UserRole.Archivist] }
+      },
+      {
+        path: 'dossiers/:id',
+        component: DossierDetailComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: [UserRole.Doctor, UserRole.Archivist] }
+      },
+      // File upload route - accessible by archivists (who manage files)
+      {
+        path: 'upload/:dossierId',
+        component: FileUploadComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: [UserRole.Archivist] }
+      },
+      // Alternative upload route without dossier ID (general upload)
+      {
+        path: 'upload',
+        component: FileUploadComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: [UserRole.Archivist] }
+      },
+      // Lazy loaded routes
+      {
+        path: 'patients',
+        loadChildren: () => import('./modules/patients/patients.module').then(m => m.PatientsModule),
+        canActivate: [RoleGuard],
+        data: { allowedRoles: [UserRole.Doctor] }
+      },
+      {
+        path: 'departments/:departmentId/files',
+        loadChildren: () => import('./modules/files/files.module').then(m => m.FilesModule),
+        canActivate: [RoleGuard],
+        data: { allowedRoles: [UserRole.Archivist] }
+      },
+      {
+        path: 'dossiers/create',
+        loadChildren: () => import('./modules/dossier-management/dossier-management.module').then(m => m.DossierManagementModule),
+        canActivate: [RoleGuard],
+        data: { allowedRoles: [UserRole.Archivist] }
+      },
+      {
+        path: 'patients/:ipp/upload/:dossierId',
+        component: FileUploadComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: [UserRole.Archivist] }
+      }
+    ]
+  },
+
+  // Default redirects
+  {
+    path: '',
+    redirectTo: '/dashboard',
+    pathMatch: 'full'
+  },
+  {
+    path: '**',
+    redirectTo: '/dashboard'
   }
 ];

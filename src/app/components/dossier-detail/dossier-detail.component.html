@@ -18,7 +18,7 @@
     <div *ngIf="!loading && !error && fullDossier" class="dossier-content">
         <div class="dossier-info-section">
             <div class="dossier-header-info">
-                <h3>{{ fullDossier.departement?.libelleFr }}</h3>
+                <h3>{{ fullDossier.departement?.libelleFr || 'Département non spécifié' }}</h3>
                 <p class="dossier-id">ID: {{ fullDossier.id }}</p>
                 <p class="creation-date">Créé le: {{ fullDossier.dateCreation | date:'dd/MM/yyyy HH:mm' }}</p>
             </div>
@@ -47,7 +47,16 @@
         </div>
 
         <div class="fichiers-section">
-            <h3>Fichiers Médicaux ({{ fullDossier.fichiers?.length || 0 }})</h3>
+            <div class="fichiers-header">
+                <h3>Fichiers Médicaux ({{ fullDossier.fichiers?.length || 0 }})</h3>
+                <button 
+                    class="btn btn-success add-files-btn" 
+                    (click)="navigateToUpload()"
+                    title="Ajouter des fichiers">
+                    <i class="fas fa-plus"></i>
+                    Ajouter des fichiers
+                </button>
+            </div>
 
             <div *ngIf="fullDossier.fichiers && fullDossier.fichiers.length > 0" class="fichiers-grid">
                 <div *ngFor="let fichier of fullDossier.fichiers" class="fichier-card">
@@ -75,12 +84,6 @@
                     </div>
 
                     <div class="fichier-actions">
-                        <!--
-                        <button class="btn btn-primary" (click)="downloadFile(fichier.filePath)">
-                            <i class="fas fa-download"></i>
-                            Télécharger
-                        </button>
-                    -->
                         <button class="btn btn-primary" (click)="downloadFile(fichier.id)">
                             <i class="fas fa-download"></i> Télécharger
                         </button>
@@ -89,8 +92,17 @@
             </div>
 
             <div *ngIf="!fullDossier.fichiers || fullDossier.fichiers.length === 0" class="no-fichiers">
-                <i class="fas fa-file-medical"></i>
-                <p>Aucun fichier médical dans ce dossier</p>
+                <div class="no-fichiers-content">
+                    <i class="fas fa-file-medical"></i>
+                    <h4>Aucun fichier médical dans ce dossier</h4>
+                    <p>Commencez par ajouter des fichiers médicaux pour ce patient</p>
+                    <button 
+                        class="btn btn-primary upload-first-file-btn" 
+                        (click)="navigateToUpload()">
+                        <i class="fas fa-upload"></i>
+                        Ajouter le premier fichier
+                    </button>
+                </div>
             </div>
         </div>
     </div>

@@ -52,7 +52,7 @@
       </div>
 
       <!-- No Dossier State - archivist -->
-      <div *ngIf="!currentUserDepartmentId && !loading && !error && !dossier" class="no-dossier-state">
+      <div *ngIf="archivistDepartmentId && !loading && !error && !dossier" class="no-dossier-state">
         <div class="no-dossier-message">
           <i class="fas fa-folder-plus"></i>
           <p>Ce patient n'a pas de dossier dans votre département.</p>
@@ -68,7 +68,7 @@
       </div>
 
       <!-- Dossier Exists and the user is an archivist-->
-      <div *ngIf="!currentUserDepartmentId && !loading && !error && dossier" class="dossier-exists">
+      <div *ngIf="archivistDepartmentId && !loading && !error && dossier" class="dossier-exists">
         <div class="dossier-card" (click)="selectDossier(dossier)">
           <div class="dossier-header">
             <h4>
@@ -101,7 +101,7 @@
       </div>
 
       <!-- Dossier Exists and the user is a doctor or admin-->
-      <div *ngIf="!currentUserDepartmentId &&!loading && !error && dossiers" class="dossiers-grid">
+      <div *ngIf="!archivistDepartmentId &&!loading && !error && dossiers" class="dossiers-grid">
             <div *ngFor="let dossier of dossiers" class="dossier-card" (click)="selectDossier(dossier)">
                 <div class="dossier-header">
                     <h4>{{ dossier.departement?.libelleFr }}</h4>
@@ -120,8 +120,8 @@
             </div>
       </div>
 
-      <!-- Dossier Exists and the user is an archivist-->
-        <div *ngIf="currentUserDepartmentId && !loading && !error && dossiers.length === 0" class="no-dossiers">
+      <!-- Dossier Exists and the user is a doctor-->
+        <div *ngIf="!archivistDepartmentId && !loading && !error && dossiers.length === 0" class="no-dossiers">
             <i class="fas fa-folder-open"></i>
             <p>Aucun dossier médical trouvé pour ce patient</p>
         </div>
@@ -134,7 +134,9 @@
     <!-- Dossier Detail Modal -->
     <app-dossier-detail 
       *ngIf="selectedDossier" 
-      [dossier]="selectedDossier" 
+      [fullDossier]="selectedDossier"
+      [loading]="dossierDetailLoading"
+      [error]="dossierDetailError"
       (close)="closeDossierDetail()">
     </app-dossier-detail>
   </div>

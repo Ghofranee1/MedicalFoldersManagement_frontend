@@ -85,6 +85,7 @@
           </div>
         </div>
 
+        <!--
         <div class="form-group">
           <label for="category">Category *</label>
           <select 
@@ -101,7 +102,53 @@
             Please select a category.
           </div>
         </div>
+        -->
+        <!-- Add this after the category field in your template -->
+<div class="form-group">
+  <label for="dossierId">Dossier ID *</label>
+  <input 
+    id="dossierId" 
+    type="number"
+    formControlName="dossierId" 
+    class="form-control"
+    placeholder="Enter dossier ID"
+    [class.is-invalid]="uploadForm.get('dossierId')?.invalid && uploadForm.get('dossierId')?.touched">
+  <div *ngIf="uploadForm.get('dossierId')?.invalid && uploadForm.get('dossierId')?.touched" class="invalid-feedback">
+    <div *ngIf="uploadForm.get('dossierId')?.errors?.['required']">Dossier ID is required.</div>
+    <div *ngIf="uploadForm.get('dossierId')?.errors?.['pattern']">Dossier ID must be a valid number.</div>
+  </div>
+</div>
 
+<div class="form-group">
+  <label for="typeFichierId">File Type</label>
+  <select 
+    id="typeFichierId" 
+    formControlName="typeFichierId" 
+    class="form-control">
+    <option value="">Select File Type (Optional)</option>
+    <!-- You'll need to load these from your backend -->
+    <option value="1">Report</option>
+    <option value="2">Image</option>
+    <option value="3">Lab Result</option>
+    <!-- Add more options as needed -->
+  </select>
+</div>
+
+<div class="form-group">
+  <div class="form-check">
+    <input 
+      id="isInternal" 
+      type="checkbox"
+      formControlName="isInternal" 
+      class="form-check-input">
+    <label for="isInternal" class="form-check-label">
+      Internal File
+    </label>
+  </div>
+</div>
+
+<!-- description and tags-->
+      <!--  
         <div class="form-group">
           <label for="description">Description *</label>
           <textarea 
@@ -128,6 +175,8 @@
             placeholder="Enter tags separated by commas (e.g., urgent, cardiology, report)">
           <small class="form-text text-muted">Separate multiple tags with commas</small>
         </div>
+
+      -->
       </div>
 
       <!-- Upload Progress -->
