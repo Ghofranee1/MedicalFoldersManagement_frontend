@@ -1,0 +1,160 @@
+<div class="file-upload-container">
+  <div class="header">
+    <h2>Upload Files</h2>
+    <button class="btn btn-secondary" (click)="cancel()">
+      <i class="fas fa-arrow-left"></i> Back
+    </button>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="success" class="alert alert-success">
+    <i class="fas fa-check-circle"></i>
+    Files uploaded successfully! Redirecting...
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="alert alert-error">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ error }}
+  </div>
+
+  <!-- Upload Form -->
+  <div class="upload-form-container">
+    <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()" class="upload-form">
+      
+      <!-- File Selection -->
+      <div class="form-section">
+        <h3>Select Files</h3>
+        <div class="file-input-container">
+          <input 
+            type="file" 
+            id="fileInput" 
+            multiple 
+            (change)="onFileSelected($event)"
+            class="file-input"
+            [accept]="allowedTypes.join(',')">
+          <label for="fileInput" class="file-input-label">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>Choose files or drag and drop</span>
+            <small>Maximum file size: 50MB | Allowed types: PDF, Images, Word, Excel</small>
+          </label>
+        </div>
+
+        <!-- Selected Files -->
+        <div *ngIf="selectedFiles.length > 0" class="selected-files">
+          <h4>Selected Files ({{ selectedFiles.length }})</h4>
+          <div class="file-list">
+            <div *ngFor="let file of selectedFiles; let i = index" class="file-item">
+              <div class="file-info">
+                <i [class]="getFileIcon(file)"></i>
+                <div class="file-details">
+                  <span class="file-name">{{ file.name }}</span>
+                  <span class="file-size">{{ formatFileSize(file.size) }}</span>
+                </div>
+              </div>
+              <button 
+                type="button" 
+                class="btn btn-sm btn-danger" 
+                (click)="removeFile(i)"
+                title="Remove file">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- File Details -->
+      <div class="form-section">
+        <h3>File Details</h3>
+        
+        <div class="form-group">
+          <label for="departmentId">Department *</label>
+          <select 
+            id="departmentId" 
+            formControlName="departmentId" 
+            class="form-control"
+            [class.is-invalid]="uploadForm.get('departmentId')?.invalid && uploadForm.get('departmentId')?.touched">
+            <option value="">Select Department</option>
+            <option *ngFor="let dept of departments" [value]="dept.id">
+              {{ dept.name }} ({{ dept.code }})
+            </option>
+          </select>
+          <div *ngIf="uploadForm.get('departmentId')?.invalid && uploadForm.get('departmentId')?.touched" class="invalid-feedback">
+            Please select a department.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="category">Category *</label>
+          <select 
+            id="category" 
+            formControlName="category" 
+            class="form-control"
+            [class.is-invalid]="uploadForm.get('category')?.invalid && uploadForm.get('category')?.touched">
+            <option value="">Select Category</option>
+            <option *ngFor="let category of categories" [value]="category">
+              {{ category }}
+            </option>
+          </select>
+          <div *ngIf="uploadForm.get('category')?.invalid && uploadForm.get('category')?.touched" class="invalid-feedback">
+            Please select a category.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description *</label>
+          <textarea 
+            id="description" 
+            formControlName="description" 
+            class="form-control"
+            rows="4"
+            placeholder="Enter a description for the uploaded files..."
+            [class.is-invalid]="uploadForm.get('description')?.invalid && uploadForm.get('description')?.touched">
+          </textarea>
+          <div *ngIf="uploadForm.get('description')?.invalid && uploadForm.get('description')?.touched" class="invalid-feedback">
+            <div *ngIf="uploadForm.get('description')?.errors?.['required']">Description is required.</div>
+            <div *ngIf="uploadForm.get('description')?.errors?.['maxlength']">Description cannot exceed 500 characters.</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="tags">Tags</label>
+          <input 
+            id="tags" 
+            type="text" 
+            formControlName="tags" 
+            class="form-control"
+            placeholder="Enter tags separated by commas (e.g., urgent, cardiology, report)">
+          <small class="form-text text-muted">Separate multiple tags with commas</small>
+        </div>
+      </div>
+
+      <!-- Upload Progress -->
+      <div *ngIf="uploading" class="upload-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+        </div>
+        <p>Uploading files... {{ uploadProgress }}%</p>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="cancel()"
+          [disabled]="uploading">
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="uploading || selectedFiles.length === 0 || uploadForm.invalid">
+          <i class="fas fa-upload"></i>
+          {{ uploading ? 'Uploading...' : 'Upload Files' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,211 @@
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Overall page container */
+.page-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9fafb;
+    padding: 3rem 1rem;
+}
+
+/* Form card container */
+.form-card {
+    width: 100%;
+    max-width: 28rem;
+    /* ~max-w-md */
+}
+
+/* Icon circle */
+.icon-circle {
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #dbeafe;
+    border-radius: 9999px;
+}
+
+/* Icon */
+.icon-circle svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #2563eb;
+}
+
+/* Title */
+.form-title {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 1.875rem;
+    font-weight: 800;
+    color: #111827;
+}
+
+/* Subtitle */
+.form-subtitle {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+
+/* Form */
+form {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Error alert box */
+.alert-error {
+    border-radius: 0.375rem;
+    background-color: #fef2f2;
+    padding: 1rem;
+    display: flex;
+    align-items: start;
+    gap: 0.75rem;
+}
+
+.alert-error svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #f87171;
+}
+
+.alert-error h3 {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #991b1b;
+}
+
+/* Label */
+label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+/* Input */
+input[type="text"],
+input[type="password"] {
+    margin-top: 0.25rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    appearance: none;
+}
+
+input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 1px #2563eb;
+}
+
+/* Error input styles */
+input.invalid {
+    border-color: #fca5a5;
+}
+
+/* Error text */
+.error-text {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #dc2626;
+}
+
+/* Password visibility toggle button */
+.toggle-password {
+    position: absolute;
+    inset-y: 0;
+    right: 0;
+    padding-right: 0.75rem;
+    display: flex;
+    align-items: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.toggle-password svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #9ca3af;
+}
+
+/* Submit button */
+button[type="submit"] {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 0.375rem;
+    color: white;
+    background-color: #2563eb;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #1d4ed8;
+}
+
+button[type="submit"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Spinner */
+.spinner svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Sign up link */
+.text-center {
+    text-align: center;
+}
+
+.signup-btn {
+    font-weight: 500;
+    color: #2563eb;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.signup-btn:hover,
+.signup-btn:focus {
+    color: #3b82f6;
+    text-decoration: underline;
+    outline: none;
+}

@@ -1,0 +1,147 @@
+<div class="page-container">
+  <div class="form-card">
+    <div>
+      <div class="icon-circle">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+          </path>
+        </svg>
+      </div>
+      <h2 class="form-title">
+        Medical Folders Management
+      </h2>
+      <p class="form-subtitle">
+        Sign in to your account
+      </p>
+    </div>
+
+    <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Error message -->
+      <div *ngIf="error" class="alert-error">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3>
+              {{ error }}
+            </h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-fields">
+        <!-- Username field -->
+        <div>
+          <label for="username">Username</label>
+          <div class="mt-1">
+            <input id="username" name="username" type="text" formControlName="username"
+              [class.invalid]="username?.invalid && username?.touched"
+              placeholder="Enter your username">
+          </div>
+          <div *ngIf="username?.invalid && username?.touched" class="error-text">
+            <span *ngIf="username?.errors?.['required']">Username is required</span>
+            <span *ngIf="username?.errors?.['minlength']">Username must be at least 3 characters</span>
+          </div>
+        </div>
+
+        <!-- Password field -->
+        <!--
+        <div>
+          <label for="password">Password</label>
+          <div class="mt-1" style="position: relative;">
+            <input id="password" name="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+              [class.invalid]="password?.invalid && password?.touched"
+              placeholder="Enter your password" style="padding-right: 2.5rem;">
+            <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+              <svg *ngIf="!showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <svg *ngIf="showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+              </svg>
+            </button>
+          </div>
+          <div *ngIf="password?.invalid && password?.touched" class="error-text">
+            <span *ngIf="password?.errors?.['required']">Password is required</span>
+            <span *ngIf="password?.errors?.['minlength']">Password must be at least 6 characters</span>
+          </div>
+        </div>
+        -->
+
+        <!-- Password field -->
+    <div style="position: relative;">
+    <label for="password">Password</label>
+    <div class="mt-1" style="position: relative;">
+        <input id="password"
+            name="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            [class.invalid]="password?.invalid && password?.touched"
+            placeholder="Enter your password"
+            style="padding-right: 2.5rem; width: 100%;"
+        >
+        
+        <!-- Eye toggle button -->
+        <button type="button"
+                (click)="togglePasswordVisibility()"
+                class="toggle-password"
+                style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: transparent; border: none; padding: 0; cursor: pointer;">
+        <svg *ngIf="!showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="20" height="20">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+        <svg *ngIf="showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="20" height="20">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+        </svg>
+        </button>
+    </div>
+
+    <div *ngIf="password?.invalid && password?.touched" class="error-text">
+        <span *ngIf="password?.errors?.['required']">Password is required</span>
+        <span *ngIf="password?.errors?.['minlength']">Password must be at least 6 characters</span>
+    </div>
+    </div>
+
+
+      </div>
+
+      <!-- Submit button -->
+      <div>
+        <button type="submit" [disabled]="isLoading">
+          <span *ngIf="isLoading" class="spinner">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+              </path>
+            </svg>
+          </span>
+          {{ isLoading ? 'Signing in...' : 'Sign in' }}
+        </button>
+      </div>
+
+      <!-- Register link -->
+      <div class="text-center">
+        <p>
+          Don't have an account?
+          <button type="button" class="signup-btn" (click)="navigateToRegister()">
+            Sign up here
+          </button>
+        </p>
+      </div>
+    </form>
+  </div>
+</div>

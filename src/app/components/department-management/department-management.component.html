@@ -1,0 +1,246 @@
+<div class="department-management-container">
+  <div class="header">
+    <h2>Department Management</h2>
+    <button class="btn btn-primary" (click)="showCreateForm()" *ngIf="!showForm">
+      <i class="fas fa-plus"></i> Add Department
+    </button>
+  </div>
+
+  <!-- Success/Error Messages -->
+  <div *ngIf="success" class="alert alert-success">
+    <i class="fas fa-check-circle"></i>
+    {{ success }}
+  </div>
+
+  <div *ngIf="error" class="alert alert-error">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ error }}
+  </div>
+
+  <!-- Department Form -->
+  <div *ngIf="showForm" class="form-container">
+    <div class="form-header">
+      <h3>{{ editingDepartment ? 'Edit Department' : 'Create New Department' }}</h3>
+      <button class="btn btn-secondary" (click)="cancelForm()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()" class="department-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Department Name *</label>
+          <input 
+            id="name"
+            type="text" 
+            formControlName="name" 
+            class="form-control"
+            [class.is-invalid]="departmentForm.get('name')?.invalid && departmentForm.get('name')?.touched"
+            placeholder="Enter department name">
+          <div *ngIf="departmentForm.get('name')?.invalid && departmentForm.get('name')?.touched" class="invalid-feedback">
+            <div *ngIf="departmentForm.get('name')?.errors?.['required']">Name is required.</div>
+            <div *ngIf="departmentForm.get('name')?.errors?.['maxlength']">Name cannot exceed 100 characters.</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="code">Department Code *</label>
+          <input 
+            id="code"
+            type="text" 
+            formControlName="code" 
+            class="form-control"
+            [class.is-invalid]="departmentForm.get('code')?.invalid && departmentForm.get('code')?.touched"
+            placeholder="Enter department code (e.g., CARD, NEURO)"
+            style="text-transform: uppercase;">
+          <div *ngIf="departmentForm.get('code')?.invalid && departmentForm.get('code')?.touched" class="invalid-feedback">
+            <div *ngIf="departmentForm.get('code')?.errors?.['required']">Code is required.</div>
+            <div *ngIf="departmentForm.get('code')?.errors?.['pattern']">Code must contain only uppercase letters and numbers.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea 
+          id="description"
+          formControlName="description" 
+          class="form-control"
+          rows="3"
+          placeholder="Enter department description...">
+        </textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="head">Department Head</label>
+          <input 
+            id="head"
+            type="text" 
+            formControlName="head" 
+            class="form-control"
+            placeholder="Enter department head name">
+        </div>
+
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input 
+            id="location"
+            type="text" 
+            formControlName="location" 
+            class="form-control"
+            placeholder="Enter department location">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="phoneNumber">Phone Number</label>
+          <input 
+            id="phoneNumber"
+            type="tel" 
+            formControlName="phoneNumber" 
+            class="form-control"
+            [class.is-invalid]="departmentForm.get('phoneNumber')?.invalid && departmentForm.get('phoneNumber')?.touched"
+            placeholder="Enter phone number">
+          <div *ngIf="departmentForm.get('phoneNumber')?.invalid && departmentForm.get('phoneNumber')?.touched" class="invalid-feedback">
+            Please enter a valid phone number.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            id="email"
+            type="email" 
+            formControlName="email" 
+            class="form-control"
+            [class.is-invalid]="departmentForm.get('email')?.invalid && departmentForm.get('email')?.touched"
+            placeholder="Enter email address">
+          <div *ngIf="departmentForm.get('email')?.invalid && departmentForm.get('email')?.touched" class="invalid-feedback">
+            Please enter a valid email address.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" formControlName="status" class="form-control">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="cancelForm()" [disabled]="loading">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="loading || departmentForm.invalid">
+          <i class="fas fa-save"></i>
+          {{ loading ? 'Saving...' : (editingDepartment ? 'Update Department' : 'Create Department') }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Departments List -->
+  <div *ngIf="!showForm" class="departments-section">
+    <!-- Search -->
+    <div class="search-container">
+      <div class="search-input-group">
+        <i class="fas fa-search"></i>
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (input)="onSearch()"
+          class="form-control"
+          placeholder="Search departments...">
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading departments...</p>
+    </div>
+
+    <!-- Departments Grid -->
+    <div *ngIf="!loading" class="departments-grid">
+      <div *ngFor="let department of filteredDepartments" class="department-card">
+        <div class="department-header">
+          <div class="department-info">
+            <h4>{{ department.name }}</h4>
+            <span class="department-code">{{ department.code }}</span>
+          </div>
+          <span class="status-badge" [ngClass]="getStatusClass(department.status)">
+            {{ department.status | titlecase }}
+          </span>
+        </div>
+
+        <div class="department-details">
+          <p *ngIf="department.description" class="description">{{ department.description }}</p>
+          
+          <div class="detail-row" *ngIf="department.head">
+            <i class="fas fa-user"></i>
+            <span>{{ department.head }}</span>
+          </div>
+          
+          <div class="detail-row" *ngIf="department.location">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{ department.location }}</span>
+          </div>
+          
+          <div class="detail-row" *ngIf="department.phoneNumber">
+            <i class="fas fa-phone"></i>
+            <span>{{ department.phoneNumber }}</span>
+          </div>
+          
+          <div class="detail-row" *ngIf="department.email">
+            <i class="fas fa-envelope"></i>
+            <span>{{ department.email }}</span>
+          </div>
+          
+          <div class="detail-row" *ngIf="department.fileCount !== undefined">
+            <i class="fas fa-file"></i>
+            <span>{{ department.fileCount }} files</span>
+          </div>
+        </div>
+
+        <div class="department-actions">
+          <button 
+            class="btn btn-sm btn-outline-primary" 
+            (click)="editDepartment(department)"
+            title="Edit Department">
+            <i class="fas fa-edit"></i>
+          </button>
+          
+          <button 
+            class="btn btn-sm" 
+            [ngClass]="department.status === 'active' ? 'btn-outline-warning' : 'btn-outline-success'"
+            (click)="toggleDepartmentStatus(department)"
+            [title]="department.status === 'active' ? 'Deactivate Department' : 'Activate Department'">
+            <i class="fas" [ngClass]="department.status === 'active' ? 'fa-pause' : 'fa-play'"></i>
+          </button>
+          
+          <button 
+            class="btn btn-sm btn-outline-danger" 
+            (click)="deleteDepartment(department)"
+            title="Delete Department">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && filteredDepartments.length === 0" class="empty-state">
+      <i class="fas fa-building fa-3x"></i>
+      <h3>No departments found</h3>
+      <p *ngIf="searchTerm">Try adjusting your search criteria.</p>
+      <p *ngIf="!searchTerm">Get started by creating your first department.</p>
+      <button class="btn btn-primary" (click)="showCreateForm()">
+        <i class="fas fa-plus"></i> Add Department
+      </button>
+    </div>
+  </div>
+</div>

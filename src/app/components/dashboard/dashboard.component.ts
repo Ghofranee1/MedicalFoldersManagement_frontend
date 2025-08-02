@@ -6,12 +6,13 @@ import { DossierStatistics } from '../../models/statistics.model';
 import { Patient } from '../../models/patient.model';
 import { Departement } from '../../models/departement.model';
 import { CommonModule } from '@angular/common';
-//import { RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router'; // Added RouterModule
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule], // Added RouterModule
   standalone: true
 })
 export class DashboardComponent implements OnInit {
@@ -33,7 +34,7 @@ export class DashboardComponent implements OnInit {
 
   private loadDashboardData() {
     this.loading = true;
-    
+        
     // Load statistics
     this.dossierService.getDossiersStatistics().subscribe({
       next: (response) => {
@@ -46,28 +47,35 @@ export class DashboardComponent implements OnInit {
 
     // Load recent patients
     this.patientService.getAllPatients().subscribe({
-  next: (response) => {
-        //const patients = response?.data;
+      next: (response) => {
         const patients = response;
-    if (Array.isArray(patients)) {
-      this.recentPatients = patients.slice(0, 5);
-    } else {
-      console.error('PatientService: données inattendues', response);
-      this.recentPatients = [];
-    }
-    this.loading = false;
-  },
-  error: (error) => {
-    this.error = error.message || 'Erreur inconnue';
-    this.loading = false;
-  }
-});
-
+        if (Array.isArray(patients)) {
+          this.recentPatients = patients.slice(0, 5);
+        } else {
+          console.error('PatientService: données inattendues', response);
+          this.recentPatients = [];
+        }
+        this.loading = false;
+      },
+      error: (error) => {
+        this.error = error.message || 'Erreur inconnue';
+        this.loading = false;
+      }
+    });
 
     // Load departements
     this.departementService.getAllDepartements().subscribe({
       next: (response) => {
-        this.departements = response.data;
+        this.departements = (response as any[]).map((dept: any) => ({
+          id: dept.id,
+          libelleFr: dept.libelleFr ?? '',
+          libelleAr: dept.libelleAr,
+          abreviationFr: dept.abreviationFr,
+          abreviationAr: dept.abreviationAr,
+          reference: dept.reference,
+          status: dept.status,
+          dossiers: dept.dossiers
+        }));
       },
       error: (error) => {
         console.error('Error loading departements:', error);

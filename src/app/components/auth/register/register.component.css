@@ -1,0 +1,254 @@
+  .animate-spin {
+      animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+      from {
+          transform: rotate(0deg);
+      }
+
+      to {
+          transform: rotate(360deg);
+      }
+  }
+
+/* Container */
+.page-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9fafb;
+    padding: 3rem 1rem;
+}
+
+.form-wrapper {
+    width: 100%;
+    max-width: 28rem;
+}
+
+/* Logo Circle */
+.logo-circle {
+    height: 3rem;
+    width: 3rem;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background-color: #dbeafe;
+}
+
+/* Headings */
+.title {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 1.875rem;
+    font-weight: 800;
+    color: #111827;
+}
+
+.subtitle {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+
+/* Error Alert */
+.alert {
+    background-color: #fef2f2;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: start;
+    font-size: 0.875rem;
+    color: #991b1b;
+}
+
+/* Input fields */
+input,
+select {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    outline: none;
+}
+
+input:focus,
+select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.invalid {
+    border-color: #fca5a5 !important;
+}
+
+.error-text {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #dc2626;
+}
+
+/* Grid layout for first/last name */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Role selection */
+.radio-group {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.radio-option {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+}
+
+.radio-option input[type='radio'] {
+    margin-top: 0.25rem;
+    height: 1rem;
+    width: 1rem;
+}
+
+.radio-label {
+    margin-left: 0.75rem;
+}
+
+.radio-label span:first-child {
+    font-weight: 500;
+    color: #111827;
+}
+
+.radio-label span:last-child {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+/* Password visibility toggle */
+.password-toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding-right: 0.75rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Submit button */
+.btn-submit {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    background-color: #2563eb;
+    color: white;
+    font-weight: 500;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-submit:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Spinner inside submit button */
+.spinner {
+    position: absolute;
+    left: 0;
+    inset-y: 0;
+    display: flex;
+    align-items: center;
+    padding-left: 0.75rem;
+}
+
+.spinner svg {
+    animation: spin 1s linear infinite;
+    height: 1.25rem;
+    width: 1.25rem;
+    color: white;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Login redirect */
+.login-link {
+    text-align: center;
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+
+.login-link button {
+    background: none;
+    border: none;
+    color: #2563eb;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.login-link button:hover {
+    color: #3b82f6;
+}
+
+.login-link button:focus {
+    outline: none;
+    text-decoration: underline;
+}
+
+
+.password-container {
+    position: relative;
+}
+
+.password-container input {
+    padding-right: 2.5rem;
+}
+
+.eye-toggle {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}

@@ -1,4 +1,4 @@
-<nav class="navbar">
+<nav class="navbar" *ngIf="isAuthenticated()">
     <div class="nav-brand">
         <i class="fas fa-hospital-alt"></i>
         <span>Gestion Dossiers Médicaux</span>
@@ -12,9 +12,44 @@
             </a>
         </li>
         <li class="nav-item">
-            <a routerLink="/patients" class="nav-link" [class.active]="isActiveRoute('/patients')">
+            <a routerLink="/patients/search" class="nav-link" [class.active]="isActiveRoute('/patients/search')">
                 <i class="fas fa-users"></i>
+                Recherche Patients
+            </a>
+        </li>
+        <li class="nav-item">
+            <a routerLink="/patients" class="nav-link" [class.active]="isActiveRoute('/patients')">
+                <i class="fas fa-user-md"></i>
                 Patients
+            </a>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link logout-btn" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Déconnexion
+            </button>
+        </li>
+    </ul>
+</nav>
+
+<!-- Auth navigation for login/register pages -->
+<nav class="auth-navbar" *ngIf="!isAuthenticated()">
+    <div class="nav-brand">
+        <i class="fas fa-hospital-alt"></i>
+        <span>Gestion Dossiers Médicaux</span>
+    </div>
+    
+    <ul class="nav-menu">
+        <li class="nav-item">
+            <a routerLink="/login" class="nav-link" [class.active]="isActiveRoute('/login')">
+                <i class="fas fa-sign-in-alt"></i>
+                Connexion
+            </a>
+        </li>
+        <li class="nav-item">
+            <a routerLink="/register" class="nav-link" [class.active]="isActiveRoute('/register')">
+                <i class="fas fa-user-plus"></i>
+                Inscription
             </a>
         </li>
     </ul>
