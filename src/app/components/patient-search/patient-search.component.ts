@@ -7,6 +7,7 @@ import { Patient } from '../../models/patient.model';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PatientDetailComponent } from "../patient-detail/patient-detail.component";
+import { AuthService } from '../../services/auth.service';
 //import { RouterModule } from '@angular/router';
 
 @Component({
@@ -22,14 +23,26 @@ export class PatientSearchComponent implements OnInit {
   loading = false;
   error: string | null = null;
   selectedPatient: Patient | null = null;
+  currentUserDepartmentId: number | undefined = 0; // This should come from your auth service
+  
 
   constructor(
     private fb: FormBuilder,
-    private patientService: PatientService
+    private patientService: PatientService,
+    private authService: AuthService,
   ) {
     this.searchForm = this.fb.group({
       searchTerm: ['']
     });
+
+    // Get the current user's department ID from your authentication service
+    const currentUser = this.authService.getCurrentUser();
+    console.log('Current User:', currentUser);
+    if (currentUser && currentUser.role === 2) {
+      this.currentUserDepartmentId = currentUser.departementId;
+    }
+    console.log('Current User Department ID:', this.currentUserDepartmentId);
+
   }
 
   ngOnInit() {

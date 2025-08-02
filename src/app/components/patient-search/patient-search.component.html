@@ -73,7 +73,7 @@
     <!-- Patient Details Modal/Panel -->
     <div *ngIf="selectedPatient" class="patient-detail-overlay" (click)="clearSelection()">
         <div class="patient-detail-panel" (click)="$event.stopPropagation()">
-            <app-patient-detail [patient]="selectedPatient" (close)="clearSelection()"></app-patient-detail>
+            <app-patient-detail [patient]="selectedPatient"  [archivistDepartmentId]="currentUserDepartmentId ?? 0" (close)="clearSelection()"></app-patient-detail>
         </div>
     </div>
 </div>
