@@ -4,13 +4,15 @@ import { Router, ActivatedRoute, RouterModule } from '@angular/router'; // Added
 import { AuthService } from '../../../services/auth.service';
 import { LoginRequest } from '../../../models/auth.model';
 import { CommonModule } from '@angular/common';
+import { NavigationComponent } from "../../navigation/navigation.component";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterModule] // Added RouterModule
+  imports: [ReactiveFormsModule, CommonModule, RouterModule, NavigationComponent] // Added RouterModule
+ // Added RouterModule
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;

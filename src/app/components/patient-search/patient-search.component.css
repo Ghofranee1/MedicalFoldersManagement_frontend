@@ -153,3 +153,100 @@
     max-height: 90vh;
     overflow-y: auto;
 }
+
+
+/* Highlight doctor's department dossier */
+.dossier-card.doctor-department {
+  border: 2px solid #007bff !important;
+  background: linear-gradient(135deg, #f8f9ff 0%, #e6f2ff 100%) !important;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2) !important;
+  position: relative;
+  transform: scale(1.02);
+  transition: all 0.3s ease;
+}
+
+.dossier-card.doctor-department:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.3) !important;
+}
+
+/* Department indicator star icon */
+.department-indicator {
+  color: #007bff;
+  margin-left: 8px;
+  font-size: 16px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+/* Department badge */
+.department-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.4);
+  z-index: 2;
+}
+
+/* Enhanced dossier header for doctor's department */
+.dossier-card.doctor-department .dossier-header h4 {
+  color: #007bff;
+  font-weight: 600;
+}
+
+/* Optional: Add a subtle glow effect */
+.dossier-card.doctor-department::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #007bff, #28a745, #007bff);
+  z-index: -1;
+  border-radius: inherit;
+  opacity: 0.3;
+  animation: borderGlow 3s linear infinite;
+}
+
+@keyframes borderGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/* Ensure other dossier cards have normal styling */
+.dossier-card:not(.doctor-department) {
+  border: 1px solid #e0e0e0;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.dossier-card:not(.doctor-department):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .department-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    top: -6px;
+    right: -6px;
+  }
+  
+  .department-indicator {
+    font-size: 14px;
+  }
+}

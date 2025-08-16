@@ -3,13 +3,15 @@ import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 import { ApiResponse } from '../models/api-response.model';
 import { Patient } from '../models/patient.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PatientService {
   private readonly endpoint = 'api/Patient';
-
+  private readonly endpointDossiersCount = `api/dossiermedical`;
+  
   constructor(private apiService: ApiService) {}
 
   /*
@@ -51,4 +53,15 @@ export class PatientService {
   checkPatientExists(ipp: string): Observable<any> {
     return this.apiService.head(`${this.endpoint}/${ipp}`);
   }
+
+
+  getPatientFichierscount(departmentId: number, patientId: number): Observable<ApiResponse<any>> {
+    if (departmentId !== 0) {
+      return this.apiService.get<ApiResponse<any>>(`${this.endpointDossiersCount}/patient/${patientId}/departement/${departmentId}`);
+    } else {
+      return this.apiService.get<ApiResponse<any>>(`${this.endpointDossiersCount}/patient/${patientId}`);
+    }
+  } 
+
+
 }

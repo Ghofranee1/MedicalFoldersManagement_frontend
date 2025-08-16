@@ -208,6 +208,9 @@ import { PatientDetailComponent } from './components/patient-detail/patient-deta
 import { DossierDetailComponent } from './components/dossier-detail/dossier-detail.component';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized/unauthorized.component';
+//import { FileTypeManagementComponent } from './components/file-type-management/file-type-management.component';
+import { TypeFichierManagementComponent } from './components/type-fichier-management/type-fichier-management.component';
+import { AdminUserManagementComponent } from './components/admin-user-management/admin-user-management.component';
 
 export const routes: Routes = [
   // Public routes (no layout)
@@ -224,6 +227,12 @@ export const routes: Routes = [
     component: UnauthorizedComponent
   },
 
+  /*
+  {
+    path: 'dossier-detail/:id',
+    component: DossierDetailComponent,
+  },
+  */
   // Protected routes (with layout)
   {
     path: '',
@@ -238,70 +247,107 @@ export const routes: Routes = [
         path: 'patients/search',
         component: PatientSearchComponent,
         canActivate: [RoleGuard],
-        data: { allowedRoles: [UserRole.Doctor, UserRole.Archivist] }
+        data: { allowedRoles: [UserRole.Doctor, UserRole.Archivist, UserRole.Admin] }
       },
       {
         path: 'patients/:ipp',
         component: PatientDetailComponent,
         canActivate: [RoleGuard],
-        data: { allowedRoles: [UserRole.Doctor, UserRole.Archivist] }
+        data: { allowedRoles: [UserRole.Doctor, UserRole.Archivist, UserRole.Admin] }
       },
+      /*
       {
         path: 'dossiers/:id',
         component: DossierDetailComponent,
+        
         canActivate: [RoleGuard],
-        data: { allowedRoles: [UserRole.Doctor, UserRole.Archivist] }
+        data: { allowedRoles: [UserRole.Doctor, UserRole.Archivist, UserRole.Admin] }
+      },
+      */
+      
+      {
+        path: 'dossier-detail/:id',
+        component: DossierDetailComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: [UserRole.Doctor, UserRole.Archivist, UserRole.Admin] }
       },
       // File upload route - accessible by archivists (who manage files)
       {
         path: 'upload/:dossierId',
         component: FileUploadComponent,
         canActivate: [RoleGuard],
-        data: { allowedRoles: [UserRole.Archivist] }
+        data: { allowedRoles: [UserRole.Archivist, UserRole.Admin] }
       },
       // Alternative upload route without dossier ID (general upload)
       {
         path: 'upload',
         component: FileUploadComponent,
         canActivate: [RoleGuard],
-        data: { allowedRoles: [UserRole.Archivist] }
+        data: { allowedRoles: [UserRole.Archivist, UserRole.Admin] }
       },
       // Lazy loaded routes
       {
         path: 'patients',
         loadChildren: () => import('./modules/patients/patients.module').then(m => m.PatientsModule),
         canActivate: [RoleGuard],
-        data: { allowedRoles: [UserRole.Doctor] }
+        data: { allowedRoles: [UserRole.Doctor, UserRole.Admin]}
       },
       {
         path: 'departments/:departmentId/files',
         loadChildren: () => import('./modules/files/files.module').then(m => m.FilesModule),
         canActivate: [RoleGuard],
-        data: { allowedRoles: [UserRole.Archivist] }
+        data: { allowedRoles: [UserRole.Archivist, UserRole.Admin] }
       },
       {
         path: 'dossiers/create',
         loadChildren: () => import('./modules/dossier-management/dossier-management.module').then(m => m.DossierManagementModule),
         canActivate: [RoleGuard],
-        data: { allowedRoles: [UserRole.Archivist] }
+        data: { allowedRoles: [UserRole.Archivist, UserRole.Admin] }
       },
       {
         path: 'patients/:ipp/upload/:dossierId',
         component: FileUploadComponent,
         canActivate: [RoleGuard],
-        data: { allowedRoles: [UserRole.Archivist] }
+        data: { allowedRoles: [UserRole.Archivist, UserRole.Admin] }
+      },
+      {
+        path: 'login',
+        component: LoginComponent
+      },
+      /*
+      {
+        path: 'manage-types',
+        component: FileTypeManagementComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: [UserRole.Admin] }
+      },
+      //this didn't work
+      {
+        path: 'manage-types-version-2',
+        component: TypeFichierManagementComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: [UserRole.Admin] }
       }
-    ]
-  },
+      
+      */
+      {
+        path: 'manage-types-version-2',
+        loadComponent: () =>
+          import('./components/type-fichier-management/type-fichier-management.component')
+            .then(m => m.TypeFichierManagementComponent),
+        canActivate: [RoleGuard],
+        data: { allowedRoles: [UserRole.Admin] }
+      },
+      {
+        path: 'admin-user-management',
+        loadComponent: () =>
+          import('./components/admin-user-management/admin-user-management.component')
+            .then(m => m.AdminUserManagementComponent),
+        canActivate: [RoleGuard],
+        data: { allowedRoles: [UserRole.Admin] }
+      },
+      
 
-  // Default redirects
-  {
-    path: '',
-    redirectTo: '/dashboard',
-    pathMatch: 'full'
-  },
-  {
-    path: '**',
-    redirectTo: '/dashboard'
+    ]
   }
 ];

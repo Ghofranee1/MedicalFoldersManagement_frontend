@@ -1,3 +1,4 @@
+<app-navigation></app-navigation>
 <div class="page-container">
   <div class="form-wrapper">
     <!-- Icon and Header -->
@@ -14,16 +15,6 @@
 
     <!-- Form -->
     <form class="form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-      <!-- Error message -->
-      <div *ngIf="error" class="alert">
-        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd"
-            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-            clip-rule="evenodd"></path>
-        </svg>
-        <div>{{ error }}</div>
-      </div>
-
       <div class="space-y-4">
         <!-- First and Last Name -->
         <div class="grid-2">
@@ -59,8 +50,8 @@
         <!-- Email -->
         <div>
           <label for="email">Email</label>
-          <input id="email" type="email" formControlName="email"
-            [class.invalid]="email?.invalid && email?.touched" placeholder="Enter your email">
+          <input id="email" type="email" formControlName="email" [class.invalid]="email?.invalid && email?.touched"
+            placeholder="Enter your email">
           <div *ngIf="email?.invalid && email?.touched" class="error-text">
             <span *ngIf="email?.errors?.['required']">Email is required</span>
             <span *ngIf="email?.errors?.['email']">Please enter a valid email</span>
@@ -81,31 +72,20 @@
           </div>
         </div>
 
-        <!-- Department (Archivists only) -->
-        <!--
-        <div *ngIf="isArchivistRole">
+        <!-- Department (For Archivists and Doctors) -->
+        <div *ngIf="requiresDepartment">
           <label for="departementId">Department</label>
           <select id="departementId" formControlName="departementId"
             [class.invalid]="departementId?.invalid && departementId?.touched">
-            <option value="" >Select a department</option>
-            <option style="z-index: 0;" *ngFor="let dept of departements" [value]="dept.id">{{ dept.libelleFr }}</option>
+            <option value="">Select a department</option>
+            <!-- Fixed: Use dept.id as value instead of dept.libelleFr -->
+            <option *ngFor="let dept of departements" [value]="dept.id">{{ dept.id }} -- {{ dept.libelleFr }}</option>
           </select>
           <div *ngIf="departementId?.invalid && departementId?.touched" class="error-text">
-            <span *ngIf="departementId?.errors?.['required']">Department is required for archivists</span>
+            <span *ngIf="departementId?.errors?.['required']">Department is required for {{ isArchivistRole ?
+              'archivists' : 'doctors' }}</span>
           </div>
         </div>
-    -->
-    <div *ngIf="isArchivistRole">
-  <label for="departementId">Département</label>
-  <select id="departementId" formControlName="departementId"
-    [class.invalid]="departementId?.invalid && departementId?.touched">
-    <option value="">Sélectionnez un département</option>
-    <option *ngFor="let dept of departements" [value]="dept.id">{{ dept.libelleFr }}</option>
-  </select>
-  <div *ngIf="departementId?.invalid && departementId?.touched" class="error-text">
-    <span *ngIf="departementId?.errors?.['required']">Le département est requis pour les archivistes</span>
-  </div>
-</div>
 
         <!-- Password -->
         <div>
@@ -133,7 +113,7 @@
             <span *ngIf="password?.errors?.['minlength']">Password must be at least 6 characters</span>
           </div>
         </div>
-        
+
         <!-- Confirm Password -->
         <div>
           <label for="confirmPassword">Confirm Password</label>
@@ -177,13 +157,40 @@
         </button>
       </div>
 
-      <!-- Login Link -->
-      <div class="login-link">
-        <p>
-          Already have an account?
-          <button type="button" (click)="navigateToLogin()">Sign in here</button>
-        </p>
-      </div>
+          <!-- Success message -->
+          <div class="alert alert-success" *ngIf="successMessage">
+            <div class="alert-icon">
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div class="alert-content">Your changes have been saved successfully!</div>
+            <button type="button" class="alert-close" onclick="this.parentElement.style.display='none'">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          
+          <!-- Error message -->
+          <div *ngIf="error" class="alert alert-error">
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clip-rule="evenodd"></path>
+            </svg>
+            <div class="alert-content">{{ error }}</div>
+            <button type="button" (click)="closeErrorMessage()" class="alert-close">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+      
     </form>
   </div>
 </div>

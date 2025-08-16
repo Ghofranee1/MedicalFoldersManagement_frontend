@@ -24,7 +24,7 @@ export class PatientSearchComponent implements OnInit {
   error: string | null = null;
   selectedPatient: Patient | null = null;
   currentUserDepartmentId: number | undefined = 0; // This should come from your auth service
-  
+  nombreDossiersDepartement: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -83,6 +83,7 @@ export class PatientSearchComponent implements OnInit {
     this.patientService.getAllPatients().subscribe({
       next: (response) => {
         this.patients = response;
+        response.forEach((patient) => this.loadPatientFolderCount(patient));
         this.loading = false;
       },
       error: (error) => {
@@ -111,5 +112,90 @@ export class PatientSearchComponent implements OnInit {
     }
     
     return age;
+  }
+
+/*
+  getPatientDossiersCount(patient: Patient): String {
+    this.patientService.getPatientFolderscount(this.currentUserDepartmentId!, Number(patient.ipp)).subscribe({
+      next: (res) => {
+        //this.nombreDossiersDepartement = count;
+        this.patientFolderCounts[patient.ipp] = res.data?.nombreFichiers ?? 0;
+        //if (res.data?.nombreFichiers !== undefined) {
+      },
+      error: (error: any) => {
+        console.error('Error fetching patient dossiers count:', error);
+        //this.nombreDossiersDepartement = patient.dossiers?.length ?? 0;
+        this.patientFolderCounts[patient.ipp] = patient.dossiers?.length ?? 0;
+      }
+    });
+    
+    return this.nombreDossiersDepartement.toString();
+  }
+*/
+
+
+  // In your component
+  patientFolderCounts: { [ipp: string]: number } = {};
+
+  loadPatientFolderCount(patient: Patient) {
+    
+    this.patientService
+      .getPatientFichierscount(this.currentUserDepartmentId!, Number(patient.ipp))
+      .subscribe({
+        next: (res) => {
+          if (this.currentUserDepartmentId! !== 0) {
+            if (patient.dossiers && patient.dossiers.length > 0) {
+              this.patientFolderCounts[patient.ipp] = res.data?.nombreFichiers ?? 0;
+            } else {
+              this.patientFolderCounts[patient.ipp] = 0;
+            }
+          } else {
+            //here we are going to sum up all the nobreFichiers of the dossiers
+            //for each data item in the res.data array we're going to take the nombrefichiers and sum them up
+            const totalFiles = res.data.reduce((sum: number, dossier: any) => {
+              return sum + (dossier.nombreFichiers || 0);
+            }, 0);
+            this.patientFolderCounts[patient.ipp] = totalFiles;
+            
+          }
+        },
+        error: () => {
+          this.patientFolderCounts[patient.ipp] = 0;
+        }
+      });
+  }
+
+
+  isDoctor(): boolean {
+    try {
+      const userStr = localStorage.getItem('medicalapp_user');
+      if (!userStr) return false;
+      const user = JSON.parse(userStr);
+      return user.role === 1;
+    } catch {
+      return false;
+    }
+  }
+
+  isArchivist(): boolean {
+    try {
+      const userStr = localStorage.getItem('medicalapp_user');
+      if (!userStr) return false;
+      const user = JSON.parse(userStr);
+      return user.role === 2;
+    } catch {
+      return false;
+    }
+  }
+
+  isAdmin(): boolean {
+    try {
+      const userStr = localStorage.getItem('medicalapp_user');
+      if (!userStr) return false;
+      const user = JSON.parse(userStr);
+      return user.role === 3;
+    } catch {
+      return false;
+    }
   }
 }

@@ -13,7 +13,6 @@ import { LoginComponent } from './components/auth/login/login.component';
   
   template: `
     <div class="app-container">
-      <!--<app-navigation></app-navigation>-->
       <main class="main-content">
         <router-outlet></router-outlet>
       </main>
@@ -27,12 +26,6 @@ import { LoginComponent } from './components/auth/login/login.component';
   
 
 export class AppComponent {
-
-  /*
-    constructor(private http: HttpClient) {
-      console.log('HttpClient injected successfully');
-  }
-  */
   title = 'medical-folders-management';
 }
 

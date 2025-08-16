@@ -2,20 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DepartementService } from '../../services/departement.service';
 import { CommonModule } from '@angular/common';
+import { DossierMedical } from '../../models/dossier-medical.model';
 
 export interface Department {
   id: number;
-  name: string;
-  code: string;
-  description?: string;
-  head?: string;
-  location?: string;
-  phoneNumber?: string;
-  email?: string;
-  status: 'active' | 'inactive';
-  createdAt: Date;
-  updatedAt: Date;
-  fileCount?: number;
+      libelleFr: string;
+      libelleAr?: string;
+      abreviationFr?: string;
+      abreviationAr?: string;
+      reference?: string;
+      status: number;
+      dossiers?: DossierMedical[];
 }
 
 @Component({
@@ -87,9 +84,9 @@ export class DepartmentManagementComponent implements OnInit {
     } else {
       const term = this.searchTerm.toLowerCase();
       this.filteredDepartments = this.departments.filter(dept =>
-        dept.name.toLowerCase().includes(term) ||
-        dept.code.toLowerCase().includes(term) ||
-        (dept.head && dept.head.toLowerCase().includes(term))
+        dept.libelleFr.toLowerCase().includes(term) ||
+        dept.abreviationFr?.toLowerCase().includes(term) ||
+        (dept.libelleFr && dept.reference?.toLowerCase().includes(term))
       );
     }
   }
@@ -131,7 +128,7 @@ export class DepartmentManagementComponent implements OnInit {
         next: (updatedDepartment) => {
           const index = this.departments.findIndex(d => d.id === this.editingDepartment!.id);
           if (index !== -1) {
-            this.departments[index] = updatedDepartment;
+            this.departments[index] = updatedDepartment.data;
             this.applySearch();
           }
           this.success = 'Department updated successfully!';
@@ -148,7 +145,7 @@ export class DepartmentManagementComponent implements OnInit {
       // Create new department
       this.departementService.createDepartement(departmentData).subscribe({
         next: (newDepartment) => {
-          this.departments.unshift(newDepartment);
+          this.departments.unshift(newDepartment.data);
           this.applySearch();
           this.success = 'Department created successfully!';
           this.showForm = false;
@@ -164,7 +161,7 @@ export class DepartmentManagementComponent implements OnInit {
   }
 
   deleteDepartment(department: Department): void {
-    if (!confirm(`Are you sure you want to delete the department "${department.name}"? This action cannot be undone.`)) {
+    if (!confirm(`Are you sure you want to delete the department "${department.libelleFr}"? This action cannot be undone.`)) {
       return;
     }
 
@@ -187,16 +184,16 @@ export class DepartmentManagementComponent implements OnInit {
   }
 
   toggleDepartmentStatus(department: Department): void {
-    const newStatus = department.status === 'active' ? 'inactive' : 'active';
-    const action = newStatus === 'active' ? 'activate' : 'deactivate';
+    const newStatus = department.status === 1 ? 0 : 1;
+    const action = newStatus === 1 ? 'activate' : 'deactivate';
     
-    if (!confirm(`Are you sure you want to ${action} the department "${department.name}"?`)) {
+    if (!confirm(`Are you sure you want to ${action} the department "${department.libelleFr}"?`)) {
       return;
     }
 
     this.loading = true;
     this.clearMessages();
-
+/*
     this.departementService.updateDepartement(department.id, { ...department, status: newStatus }).subscribe({
       next: (updatedDepartment) => {
         const index = this.departments.findIndex(d => d.id === department.id);
@@ -213,6 +210,7 @@ export class DepartmentManagementComponent implements OnInit {
         console.error('Status update error:', error);
       }
     });
+    */
   }
 
   markFormGroupTouched(): void {

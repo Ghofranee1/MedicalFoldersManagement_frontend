@@ -6,7 +6,7 @@ import { DossierStatistics } from '../../models/statistics.model';
 import { Patient } from '../../models/patient.model';
 import { Departement } from '../../models/departement.model';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router'; // Added RouterModule
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -39,6 +39,7 @@ export class DashboardComponent implements OnInit {
     this.dossierService.getDossiersStatistics().subscribe({
       next: (response) => {
         this.statistics = response.data;
+        console.log('Dossier Statistics:', this.statistics);
       },
       error: (error) => {
         this.error = error;
@@ -66,16 +67,8 @@ export class DashboardComponent implements OnInit {
     // Load departements
     this.departementService.getAllDepartements().subscribe({
       next: (response) => {
-        this.departements = (response as any[]).map((dept: any) => ({
-          id: dept.id,
-          libelleFr: dept.libelleFr ?? '',
-          libelleAr: dept.libelleAr,
-          abreviationFr: dept.abreviationFr,
-          abreviationAr: dept.abreviationAr,
-          reference: dept.reference,
-          status: dept.status,
-          dossiers: dept.dossiers
-        }));
+        console.log('Departements', response);
+        this.departements = response;
       },
       error: (error) => {
         console.error('Error loading departements:', error);

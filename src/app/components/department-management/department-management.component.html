@@ -169,41 +169,40 @@
       <div *ngFor="let department of filteredDepartments" class="department-card">
         <div class="department-header">
           <div class="department-info">
-            <h4>{{ department.name }}</h4>
-            <span class="department-code">{{ department.code }}</span>
+            <h4>{{ department.libelleFr }}</h4>
+            <span class="department-code">{{ department.reference }}</span>
           </div>
-          <span class="status-badge" [ngClass]="getStatusClass(department.status)">
-            {{ department.status | titlecase }}
-          </span>
+          <!-- <span class="status-badge" [ngClass]="getStatusClass(department.status)">
+            {{ /*department.*//*status| *//*titlecase*/ }}
+          </span>-->
         </div>
 
         <div class="department-details">
-          <p *ngIf="department.description" class="description">{{ department.description }}</p>
           
-          <div class="detail-row" *ngIf="department.head">
+          <!--          <div class="detail-row" *ngIf="department.head">
             <i class="fas fa-user"></i>
-            <span>{{ department.head }}</span>
+            <span>{{ /*department.head*/ }}</span>
           </div>
           
           <div class="detail-row" *ngIf="department.location">
             <i class="fas fa-map-marker-alt"></i>
-            <span>{{ department.location }}</span>
+            <span>{{ /*department.location*/ }}</span>
           </div>
           
           <div class="detail-row" *ngIf="department.phoneNumber">
             <i class="fas fa-phone"></i>
-            <span>{{ department.phoneNumber }}</span>
+            <span>{{ /*department.phoneNumber*/ }}</span>
           </div>
           
           <div class="detail-row" *ngIf="department.email">
             <i class="fas fa-envelope"></i>
-            <span>{{ department.email }}</span>
+            <span>{{ /*department.email*/ }}</span>
           </div>
           
           <div class="detail-row" *ngIf="department.fileCount !== undefined">
             <i class="fas fa-file"></i>
-            <span>{{ department.fileCount }} files</span>
-          </div>
+            <span>{{ /*department.fileCount*/ }} files</span>
+          </div>-->
         </div>
 
         <div class="department-actions">
@@ -214,6 +213,7 @@
             <i class="fas fa-edit"></i>
           </button>
           
+          <!--
           <button 
             class="btn btn-sm" 
             [ngClass]="department.status === 'active' ? 'btn-outline-warning' : 'btn-outline-success'"
@@ -221,7 +221,7 @@
             [title]="department.status === 'active' ? 'Deactivate Department' : 'Activate Department'">
             <i class="fas" [ngClass]="department.status === 'active' ? 'fa-pause' : 'fa-play'"></i>
           </button>
-          
+          -->
           <button 
             class="btn btn-sm btn-outline-danger" 
             (click)="deleteDepartment(department)"

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { ApiService } from './api.service';
 import { ApiResponse } from '../models/api-response.model';
 import { CreateDossierRequest } from '../models/create-dossier-request.model';
@@ -13,9 +13,11 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class DossierMedicalService {
+  getFileById(fileId: number) {
+    throw new Error('Method not implemented.');
+  }
   private readonly endpoint = 'api/DossierMedical';
   private readonly apiUrl = `${environment.apiUrl}/api/DossierMedical`;
-
   constructor(private apiService: ApiService, private http: HttpClient) {}
 /*
   getAllDossiers(): Observable<ApiResponse<DossierMedical[]>> {
@@ -53,11 +55,7 @@ export class DossierMedicalService {
   getDossiersStatistics(): Observable<ApiResponse<DossierStatistics>> {
     return this.apiService.get<ApiResponse<DossierStatistics>>(`${this.endpoint}/statistics`);
     }
-    /*
-  downloadFileById(fileId: number): Observable<Blob> {
-  return this.apiService.getBlob(`https://localhost:4000/api/FichierMedical/${fileId}/download`);
-}
-  */
+
 
   
 
@@ -125,11 +123,37 @@ export class DossierMedicalService {
     return this.http.get<any>(`${this.apiUrl}/statistics`);
   }
 
-  // Download file by ID (if you have this functionality)
-  downloadFileById(fileId: number): Observable<Blob> {
-    return this.http.get(`${environment.apiUrl}/api/file/download/${fileId}`, {
-      responseType: 'blob'
-    });
-  }
 
+
+
+
+  /**
+   * Handle HTTP errors
+   */
+  private handleError(error: any): Observable<never> {
+    let errorMessage = 'An unknown error occurred';
+
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Server-side error
+      if (error.status === 0) {
+        errorMessage = 'Unable to connect to the server';
+      } else if (error.status === 404) {
+        errorMessage = 'File not found';
+      } else if (error.status === 403) {
+        errorMessage = 'You do not have permission to delete this file';
+      } else if (error.status === 500) {
+        errorMessage = 'Server error occurred while deleting the file';
+      } else if (error.error && error.error.message) {
+        errorMessage = error.error.message;
+      } else {
+        errorMessage = `Server error: ${error.status} ${error.statusText}`;
+      }
+    }
+
+    console.error('DossierMedicalService Error:', error);
+    return throwError(() => new Error(errorMessage));
+  }
 }

@@ -1,4 +1,4 @@
-/*
+
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
@@ -9,12 +9,12 @@ import { Departement } from '../models/departement.model';
   providedIn: 'root'
 })
 export class DepartementService {
-  private readonly endpoint = 'api/Departement';
+  private readonly endpoint = 'api/departement';
 
   constructor(private apiService: ApiService) {}
 
-  getAllDepartements(): Observable<ApiResponse<Departement[]>> {
-    return this.apiService.get<ApiResponse<Departement[]>>(this.endpoint);
+  getAllDepartements(): Observable<Departement[]> {
+    return this.apiService.get<Departement[]>(this.endpoint);
   }
 
   getDepartementById(id: number): Observable<ApiResponse<Departement>> {
@@ -33,13 +33,17 @@ export class DepartementService {
     return this.apiService.delete<ApiResponse<any>>(`${this.endpoint}/${id}`);
   }
 }
-  */
+  
 
+
+/*
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { ApiService } from './api.service';
+import { DossierMedical } from '../models/dossier-medical.model';
 
 // Backend model
 export interface Departement {
@@ -50,7 +54,7 @@ export interface Departement {
   abreviationAr?: string;
   reference?: string;
   status: number;
-  dossiers?: any[];
+  dossiers?: DossierMedical[];
 }
 
 // Frontend model (matching your components)
@@ -82,9 +86,9 @@ export interface ApiResponse<T> {
 export class DepartementService {
   private readonly apiUrl = `${environment.apiUrl}/api/departement`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private apiService: ApiService) {}
 
-  /*
+  /* commented method
   getAllDepartements(): Observable<Department[]> {
     return this.http.get<ApiResponse<Departement[]>>(`${this.apiUrl}`)
       .pipe(
@@ -95,7 +99,7 @@ export class DepartementService {
         })
       );
   }
-  */
+  
   
 
   getAllDepartements(): Observable<Department[]> {
@@ -109,8 +113,14 @@ export class DepartementService {
     );
 }
 
+  
+  
+  getAllDepartements2(): Observable<Department[]> {
+    return this.apiService.get<Departement[]>(`${this.apiUrl}`);
+  }
 
-  /*
+
+  /* //commented method
   getDepartementById(id: number): Observable<Department> {
     return this.http.get<ApiResponse<Departement>>(`${this.apiUrl}/${id}`)
       .pipe(
@@ -121,7 +131,7 @@ export class DepartementService {
         })
       );
   }
-  */
+  
   
   
   getDepartementById(id: number): Observable<Department> {
@@ -200,3 +210,4 @@ export class DepartementService {
     };
   }
 }
+*/

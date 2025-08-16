@@ -1,3 +1,4 @@
+<!--
 <div class="dossier-detail-container">
     <div class="detail-header">
         <h2>Détails du Dossier Médical</h2>
@@ -50,6 +51,7 @@
             <div class="fichiers-header">
                 <h3>Fichiers Médicaux ({{ fullDossier.fichiers?.length || 0 }})</h3>
                 <button 
+                    *ngIf="isArchivist()"
                     class="btn btn-success add-files-btn" 
                     (click)="navigateToUpload()"
                     title="Ajouter des fichiers">
@@ -74,13 +76,14 @@
                             <span class="value">{{ fichier.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
                         </div>
                         <div class="detail-row">
-                            <span class="label">Type:</span>
+                            <span class="label">Statut:</span>
                             <span class="value">{{ fichier.isInternal ? 'Interne' : 'Externe' }}</span>
                         </div>
                         <div class="detail-row">
-                            <span class="label">Taille:</span>
-                            <span class="value">{{ getFileSize(fichier.filePath) }}</span>
+                            <span class="label">Type de fichier:</span>
+                            <span class="value">{{ fichier.typeFichier?.nom}}</span>
                         </div>
+                        
                     </div>
 
                     <div class="fichier-actions">
@@ -91,7 +94,143 @@
                 </div>
             </div>
 
-            <div *ngIf="!fullDossier.fichiers || fullDossier.fichiers.length === 0" class="no-fichiers">
+            <div *ngIf="isArchivist() && (!fullDossier.fichiers || fullDossier.fichiers.length === 0)" class="no-fichiers">
+                <div class="no-fichiers-content">
+                    <i class="fas fa-file-medical"></i>
+                    <h4>Aucun fichier médical dans ce dossier</h4>
+                    <p>Commencez par ajouter des fichiers médicaux pour ce patient</p>
+                    <button 
+                        class="btn btn-primary upload-first-file-btn" 
+                        (click)="navigateToUpload()">
+                        <i class="fas fa-upload"></i>
+                        Ajouter le premier fichier
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+-->
+
+
+<div class="dossier-detail-container" >
+    <div class="detail-header">
+        <h2>Détails du Dossier Médical</h2>
+        <button class="close-btn" (click)="onClose()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        Chargement du dossier...
+    </div>
+
+    <div *ngIf="error" class="error-message">
+        {{ error }}
+    </div>
+
+    <div *ngIf="!loading && !error && fullDossier" class="dossier-content">
+        <div class="dossier-info-section">
+            <div class="dossier-header-info">
+                <h3>{{ fullDossier.departement?.libelleFr || 'Département non spécifié' }}</h3>
+                <p class="dossier-id">ID: {{ fullDossier.id }}</p>
+                <p class="creation-date">Créé le: {{ fullDossier.dateCreation | date:'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+
+            <div class="patient-summary" *ngIf="fullDossier.patient">
+                <h4>Informations du Patient</h4>
+                <div class="patient-info-grid">
+                    <div class="info-item">
+                        <label>Nom:</label>
+                        <span>{{ fullDossier.patient.nomFr }} {{ fullDossier.patient.prenomFr }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>IPP:</label>
+                        <span>{{ fullDossier.patient.ipp }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Date de naissance:</label>
+                        <span>{{ fullDossier.patient.dateNaissance | date:'dd/MM/yyyy' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Sexe:</label>
+                        <span>{{ fullDossier.patient.sexe }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fichiers-section">
+            <div class="fichiers-header">
+                <h3>Fichiers Médicaux ({{ fullDossier.fichiers?.length || 0 }})</h3>
+                <button 
+                    *ngIf="isArchivist()"
+                    class="btn btn-success add-files-btn" 
+                    (click)="navigateToUpload()"
+                    title="Ajouter des fichiers">
+                    <i class="fas fa-plus"></i>
+                    Ajouter des fichiers
+                </button>
+            </div>
+
+            <div *ngIf="fullDossier.fichiers && fullDossier.fichiers.length > 0" class="fichiers-grid">
+                <div *ngFor="let fichier of fullDossier.fichiers" class="fichier-card">
+                    <div class="fichier-header">
+                        <i [class]="getFileIcon(fichier.fileName)"></i>
+                        <div class="fichier-info">
+                            <h4>{{ fichier.originalFileName || fichier.fileName }}</h4>
+                            <p class="fichier-type" *ngIf="fichier.typeFichier">{{ fichier.typeFichier.nom }}</p>
+                        </div>
+                    </div>
+
+                    <div class="fichier-details">
+                        <div class="detail-row">
+                            <span class="label">Date d'ajout:</span>
+                            <span class="value">{{ fichier.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Statut:</span>
+                            <span class="value">{{ fichier.isInternal ? 'Interne' : 'Externe' }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Type de fichier:</span>
+                            <span class="value">{{ fichier.typeFichier?.nom}}</span>
+                        </div>
+                        
+                    </div>
+
+                    <div class="fichier-actions">
+                        <!-- Preview/Open button -->
+                        <button 
+                            class="btn btn-info" 
+                            (click)="previewFile(fichier)"
+                            title="Ouvrir le fichier">
+                            <i class="fas fa-eye"></i> 
+                            {{ isPreviewableFile(fichier.fileName) ? 'Aperçu' : 'Ouvrir' }}
+                        </button>
+
+                        <!-- Download button -->
+                        <button class="btn btn-primary" (click)="downloadFile(fichier.id)">
+                            <i class="fas fa-download"></i> Télécharger
+                        </button>
+                        
+                        <!-- Delete button - only show for archivists -->
+                        <button 
+                            *ngIf="isArchivist()"
+                            class="btn btn-danger" 
+                            (click)="deleteFile(fichier)"
+                            [disabled]="isDeleting(fichier.id)"
+                            title="Supprimer le fichier">
+                            <i *ngIf="!isDeleting(fichier.id)" class="fas fa-trash"></i>
+                            <i *ngIf="isDeleting(fichier.id)" class="fas fa-spinner fa-spin"></i>
+                            {{ isDeleting(fichier.id) ? 'Suppression...' : 'Supprimer' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="isArchivist() && (!fullDossier.fichiers || fullDossier.fichiers.length === 0)" class="no-fichiers">
                 <div class="no-fichiers-content">
                     <i class="fas fa-file-medical"></i>
                     <h4>Aucun fichier médical dans ce dossier</h4>

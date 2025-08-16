@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Router } from '@angular/router';
-import { LoginRequest, RegisterRequest } from '../models/auth.model';
+import { AuthResponse, ChangePasswordRequest, LoginRequest, RegisterRequest, UpdateRoleRequest, UpdateUserRequest, UserDto, UserRole } from '../models/auth.model';
 import { catchError, tap } from 'rxjs/operators';
 
 // Temporary minimal interfaces for testing
@@ -49,15 +49,27 @@ export class AuthService {
     isLoading: false
   });
 
+  // Add this for tracking initialization
+  private authReadySubject = new BehaviorSubject<boolean>(false);
+  private isInitialized = false;
+
   public authState$ = this.authStateSubject.asObservable();
+  public authReady$ = this.authReadySubject.asObservable();
 
   constructor(
     private http: HttpClient,
     private router: Router
   ) {
     console.log('AuthService constructor called');
-    // Don't call initializeAuth immediately - test if this fixes the issue
-    setTimeout(() => this.initializeAuth(), 0);
+    // Initialize immediately - no setTimeout!
+    this.initializeAuth();
+  }
+
+  /**
+   * Observable that emits true when authentication service is ready
+   */
+  isAuthReady(): Observable<boolean> {
+    return this.authReadySubject.asObservable();
   }
 
   private initializeAuth(): void {
@@ -68,20 +80,62 @@ export class AuthService {
 
       if (token && userJson) {
         const user = JSON.parse(userJson);
-        this.updateAuthState({
-          user,
-          token,
-          isAuthenticated: true,
-          isLoading: false
-        });
-        console.log('Auth initialized with existing data');
+
+        // Check if token is expired
+        if (!this.isTokenExpired(token)) {
+          this.updateAuthState({
+            user,
+            token,
+            isAuthenticated: true,
+            isLoading: false
+          });
+          console.log('Auth initialized with existing data');
+        } else {
+          console.log('Token expired, clearing auth data');
+          this.clearAuthData();
+        }
       } else {
         console.log('No existing auth data found');
       }
+
+      // Mark as initialized
+      this.isInitialized = true;
+      this.authReadySubject.next(true);
+      console.log('Auth service initialization complete');
+
     } catch (error) {
       console.error('Error initializing auth:', error);
-      this.logout();
+      this.clearAuthData();
+      this.isInitialized = true;
+      this.authReadySubject.next(true);
     }
+  }
+
+  /**
+   * Check if JWT token is expired
+   */
+  private isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expiry = payload.exp * 1000; // Convert to milliseconds
+      return Date.now() > expiry;
+    } catch {
+      return true; // If can't decode, consider expired
+    }
+  }
+
+  /**
+   * Clear all authentication data
+   */
+  private clearAuthData(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
+    this.updateAuthState({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      isLoading: false
+    });
   }
 
   login(loginRequest: LoginRequest): Observable<LoginResponse> {
@@ -135,6 +189,12 @@ export class AuthService {
       isLoading: false
     });
 
+    // Ensure auth ready is true (in case login happens before initialization)
+    if (!this.isInitialized) {
+      this.isInitialized = true;
+      this.authReadySubject.next(true);
+    }
+
     console.log('Auth success handled, user authenticated');
   }
 
@@ -174,8 +234,22 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
+    // Don't check authentication until service is initialized
+    if (!this.isInitialized) {
+      return false;
+    }
+
     const state = this.authStateSubject.value;
-    return state.isAuthenticated && !!state.token && !!state.user;
+    const hasValidSession = state.isAuthenticated && !!state.token && !!state.user;
+
+    // Additional check for token expiration
+    if (hasValidSession && state.token && this.isTokenExpired(state.token)) {
+      console.log('Token expired during check, clearing auth data');
+      this.clearAuthData();
+      return false;
+    }
+
+    return hasValidSession;
   }
 
   isDoctor(): boolean {
@@ -207,16 +281,7 @@ export class AuthService {
 
   logout(): void {
     console.log('Logging out...');
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.USER_KEY);
-
-    this.updateAuthState({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      isLoading: false
-    });
-
+    this.clearAuthData();
     this.router.navigate(['/login']);
   }
 
@@ -266,5 +331,74 @@ export class AuthService {
   testHttpClient(): Observable<any> {
     console.log('Testing HttpClient...');
     return this.http.get('https://jsonplaceholder.typicode.com/posts/1');
+  }
+
+  /*
+  registerWithoutLogin(registerRequest: RegisterRequest): Observable<any> {
+    return this.http.post(`${this.API_BASE_URL}/register`, registerRequest);
+    // Don't call the login methods or store user data
+  }
+*/
+
+
+
+
+
+
+
+
+
+
+
+  // Get all users
+  getAllUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.API_BASE_URL}/users`);
+  }
+
+  // Get user by ID
+  getUserById(id: number): Observable<UserDto> {
+    return this.http.get<UserDto>(`${this.API_BASE_URL}/users/${id}`);
+  }
+
+  // Update user
+  updateUser(id: number, updateRequest: UpdateUserRequest): Observable<UserDto> {
+    return this.http.put<UserDto>(`${this.API_BASE_URL}/users/${id}`, updateRequest);
+  }
+
+  // Delete user
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete(`${this.API_BASE_URL}/users/${id}`);
+  }
+
+  // Change password
+  changePassword(id: number, changePasswordRequest: ChangePasswordRequest): Observable<UserDto> {
+    return this.http.post<UserDto>(`${this.API_BASE_URL}/users/${id}/change-password`, changePasswordRequest);
+  }
+
+  // Update user role
+  updateUserRole(id: number, updateRoleRequest: UpdateRoleRequest): Observable<UserDto> {
+    return this.http.put<UserDto>(`${this.API_BASE_URL}/users/${id}/role`, updateRoleRequest);
+  }
+
+  // Get users by role
+  getUsersByRole(role: UserRole): Observable<UserDto[]> {
+    return this.http.get<UserDto[]>(`${this.API_BASE_URL}/users/role/${role}`);
+  }
+
+  // Get users by department
+  getUsersByDepartment(departmentId: number): Observable<UserDto[]> {
+    return this.http.get<UserDto[]>(`${this.API_BASE_URL}/users/department/${departmentId}`);
+  }
+
+  // Register without auto-login (for admin use)
+  registerWithoutLogin(registerRequest: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.API_BASE_URL}/register`, registerRequest);
+  }
+
+  // Check if username or email is available
+  checkAvailability(username: string, email: string): Observable<{ available: number }> {
+    return this.http.get<{ available: number }>(`${this.API_BASE_URL}/check-availability`, {
+      params: { username, email }
+    });
   }
 }

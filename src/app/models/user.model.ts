@@ -7,7 +7,7 @@ export interface User {
   role: UserRole;
   departementId?: number;
   departementName?: string;
-  isActive: boolean;
+  isActive?: boolean;
   lastLogin?: Date;
 }
 

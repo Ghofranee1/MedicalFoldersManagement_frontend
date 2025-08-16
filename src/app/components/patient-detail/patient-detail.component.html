@@ -14,15 +14,17 @@
         <div class="info-row">
           <strong>IPP:</strong> {{ patient.ipp }}
         </div>
-        <div class="info-row">
-          <strong>Nom (FR):</strong> {{ patient.nomFr }} {{ patient.prenomFr }}
-        </div>
         <div class="info-row" *ngIf="patient.nomAr">
           <strong>Nom (AR):</strong> {{ patient.nomAr }} {{ patient.prenomAr }}
         </div>
-        <div class="info-row">
+         <div class="info-row">
           <strong>Date de naissance:</strong> {{ patient.dateNaissance | date:'dd/MM/yyyy' }}
         </div>
+        <div class="info-row">
+          <strong>Nom (FR):</strong> {{ patient.nomFr }} {{ patient.prenomFr }}
+        </div>
+        
+       
         <div class="info-row">
           <strong>Âge:</strong> {{ getPatientAge() }} ans
         </div>
@@ -37,7 +39,7 @@
 
     <!-- Dossier Section -->
     <div class="dossier-section">
-      <h3>Dossier Médical - Votre Département</h3>
+      <h3>Dossier Médical</h3>
       
       <!-- Loading State -->
       <div *ngIf="loading" class="loading-state">
@@ -102,42 +104,66 @@
 
       <!-- Dossier Exists and the user is a doctor or admin-->
       <div *ngIf="!archivistDepartmentId &&!loading && !error && dossiers" class="dossiers-grid">
-            <div *ngFor="let dossier of dossiers" class="dossier-card" (click)="selectDossier(dossier)">
-                <div class="dossier-header">
-                    <h4>{{ dossier.departement?.libelleFr }}</h4>
-                    <span class="dossier-id">ID: {{ dossier.id }}</span>
-                </div>
-                <div class="dossier-info">
-                    <div class="info-row">
-                        <span class="label">Date de création:</span>
-                        <span class="value">{{ dossier.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Nombre de fichiers:</span>
-                        <span class="value">{{ dossier.nombreFichiers || 0 }}</span>
-                    </div>
-                </div>
+        <div 
+          *ngFor="let dossier of dossiers" 
+          class="dossier-card" 
+          [class.doctor-department]="isDoctorDepartment(dossier)"
+          (click)="selectDossier(dossier)">
+          
+          <div class="dossier-header">
+            <h4>
+              {{ dossier.departement?.libelleFr }}
+              <i class="fas fa-star department-indicator" 
+                 *ngIf="isDoctorDepartment(dossier)"
+                 title="Votre département"></i>
+            </h4>
+            <span class="dossier-id">ID: {{ dossier.id }}</span>
+          </div>
+          
+          <div class="dossier-info">
+            <div class="info-row">
+              <span class="label">Date de création:</span>
+              <span class="value">{{ dossier.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
             </div>
+            <div class="info-row">
+              <span class="label">Nombre de fichiers:</span>
+              <span class="value">{{ dossier.nombreFichiers || 0 }}</span>
+            </div>
+          </div>
+          
+          <!-- Priority badge for doctor's department -->
+          <div class="department-badge" *ngIf="isDoctorDepartment(dossier)">
+            <span>Votre département</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Dossier Exists and the user is a doctor-->
-        <div *ngIf="!archivistDepartmentId && !loading && !error && dossiers.length === 0" class="no-dossiers">
-            <i class="fas fa-folder-open"></i>
-            <p>Aucun dossier médical trouvé pour ce patient</p>
-        </div>
-
-
-
-
+      <!-- No dossiers found -->
+      <div *ngIf="!archivistDepartmentId && !loading && !error && dossiers.length === 0" class="no-dossiers">
+        <i class="fas fa-folder-open"></i>
+        <p>Aucun dossier médical trouvé pour ce patient</p>
+      </div>
     </div>
 
     <!-- Dossier Detail Modal -->
-    <app-dossier-detail 
+    <!-- 
+    <div *ngIf="selectedDossier" class="patient-detail-overlay" (click)="clearSelection()">
+      <div class="patient-detail-panel" (click)="$event.stopPropagation()">
+        <app-dossier-detail [fullDossier]="selectedDossier"
+                            [loading]="dossierDetailLoading"
+                            [error]="dossierDetailError"
+          (close)="closeDossierDetail()">
+        </app-dossier-detail>
+      </div>
+    </div>
+  -->
+      <app-dossier-detail 
       *ngIf="selectedDossier" 
       [fullDossier]="selectedDossier"
       [loading]="dossierDetailLoading"
       [error]="dossierDetailError"
       (close)="closeDossierDetail()">
     </app-dossier-detail>
+    
   </div>
 </div>

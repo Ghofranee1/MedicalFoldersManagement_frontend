@@ -1,0 +1,228 @@
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="header">
+        <h2>Gestion des Types de Fichiers</h2>
+        <button class="btn btn-primary" (click)="openCreateModal()">
+            <i class="fas fa-plus"></i> Ajouter Type
+        </button>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="statistics-section" *ngIf="statistics">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="stat-card">
+                    <div class="stat-value">{{ statistics.totalTypes }}</div>
+                    <div class="stat-label">Total <br>Types</div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="stat-card">
+                    <div class="stat-value">{{ statistics.typesInUse }}</div>
+                    <div class="stat-label">Types<br> Utilisés</div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="stat-card">
+                    <div class="stat-value">{{ statistics.unusedTypes }}</div>
+                    <div class="stat-label">Types <br>Inutilisés</div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="stat-card">
+                    <div class="stat-value">{{ statistics.totalFiles }}</div>
+                    <div class="stat-label">Total <br>Fichiers</div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="stat-card">
+                    <div class="stat-value">{{ statistics.averageFilesPerType }}</div>
+                    <div class="stat-label">Moyenne<br> par Type</div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="stat-card">
+                    <div class="stat-value">{{ statistics.mostUsedType.fileCount }}</div>
+                    <div class="stat-label">Plus Utilisé</div>
+                    <small class="stat-subtitle" style="color: antiquewhite;">{{ statistics.mostUsedType.nom }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        {{ successMessage }}
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-error">
+        <i class="fas fa-exclamation-triangle"></i>
+        {{ errorMessage }}
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="filters-section">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="search-container">
+                    <input type="text" class="form-control" placeholder="Rechercher par nom..." [(ngModel)]="searchTerm"
+                        (input)="onSearch()">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select class="form-control" [(ngModel)]="filterType" (change)="applyFilter()">
+                    <option value="all">Tous les types</option>
+                    <option value="used">Types utilisés</option>
+                    <option value="unused">Types inutilisés</option>
+                    <option value="recent">Types récents (30 jours)</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <div class="results-count">
+                    {{ filteredTypes.length }} résultat(s)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+        <div class="spinner"></div>
+        <p>Chargement des types de fichiers...</p>
+    </div>
+
+    <!-- Types List -->
+    <div *ngIf="!loading" class="types-list">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Date de Création<br>/ Modification</th>
+                        <th>Nb. Fichiers</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let type of filteredTypes; trackBy: trackByFn">
+                        <td>
+                            <strong>{{ type.nom }}</strong>
+                        </td>
+                        <td>
+                            {{ type.dateCreation | date:'yyyy/MM/dd HH:mm' }}
+                        </td>
+                        <td>
+                            <span class="badge" [class]="type.usageCount ? 'badge-info' : 'badge-secondary'">
+                                {{ type.usageCount || 0 }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge" [class]="type.canDelete ? 'status-unused' : 'status-used'">
+                                {{ type.canDelete ? 'Inutilisé' : 'Utilisé' }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-outline-primary" (click)="editType(type)"
+                                    title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(type)"
+                                    [disabled]="!type.canDelete"
+                                    [title]="type.canDelete ? 'Supprimer' : 'Impossible de supprimer - Type utilisé'">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="filteredTypes.length === 0">
+                        <td colspan="5" class="text-center">
+                            <div class="empty-state">
+                                <i class="fas fa-search"></i>
+                                <p>Aucun type de fichier trouvé.</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Create/Edit Modal -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>{{ isEditMode ? 'Modifier Type' : 'Nouveau Type' }}</h3>
+                <button class="btn btn-icon" (click)="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form [formGroup]="typeForm" (ngSubmit)="onSubmit()">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="nom">Nom du Type *</label>
+                        <input id="nom" type="text" formControlName="nom" class="form-control"
+                            placeholder="Entrez le nom du type"
+                            [class.is-invalid]="typeForm.get('nom')?.invalid && typeForm.get('nom')?.touched">
+                        <div *ngIf="typeForm.get('nom')?.invalid && typeForm.get('nom')?.touched"
+                            class="invalid-feedback">
+                            <div *ngIf="typeForm.get('nom')?.errors?.['required']">Le nom est obligatoire.</div>
+                            <div *ngIf="typeForm.get('nom')?.errors?.['maxlength']">Le nom ne peut pas dépasser 100
+                                caractères.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeModal()" [disabled]="submitting">
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary" [disabled]="submitting || !typeForm.valid">
+                        <i *ngIf="submitting" class="fas fa-spinner fa-spin"></i>
+                        {{ submitting ? 'Enregistrement...' : (isEditMode ? 'Modifier' : 'Créer') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+    <div class="modal-dialog modal-dialog-sm" (click)="$event.stopPropagation()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmer la Suppression</h3>
+                <button class="btn btn-icon" (click)="closeDeleteModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="delete-confirmation">
+                    <i class="fas fa-exclamation-triangle warning-icon"></i>
+                    <p>Êtes-vous sûr de vouloir supprimer le type <strong>"{{ typeToDelete?.nom }}"</strong> ?</p>
+                    <p class="text-muted">Cette action est irréversible.</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()" [disabled]="submitting">
+                    Annuler
+                </button>
+                <button type="button" class="btn btn-danger" (click)="deleteType()" [disabled]="submitting">
+                    <i *ngIf="submitting" class="fas fa-spinner fa-spin"></i>
+                    {{ submitting ? 'Suppression...' : 'Supprimer' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -636,3 +636,330 @@
         grid-template-columns: 1fr;
     }
 }
+
+
+/* Add these CSS styles to your dossier-detail.component.css file */
+
+.fichier-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.fichier-actions .btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.fichier-actions .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.fichier-actions .btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.fichier-actions .btn-primary:hover:not(:disabled) {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+}
+
+.fichier-actions .btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.fichier-actions .btn-danger:hover:not(:disabled) {
+    background-color: #c82333;
+    transform: translateY(-1px);
+}
+
+.fichier-actions .btn i {
+    font-size: 12px;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+    .fichier-actions {
+        flex-direction: column;
+    }
+
+    .fichier-actions .btn {
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+/* Error message styling */
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 12px 16px;
+    border-radius: 4px;
+    border: 1px solid #f5c6cb;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.error-message::before {
+    content: "\f071";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 16px;
+}
+
+/* Loading state for delete button */
+.btn .fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+/* Add these styles to your dossier-detail.component.css */
+
+.fichier-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e9ecef;
+}
+
+.fichier-actions .btn {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    min-width: 100px;
+    justify-content: center;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(23, 162, 184, 0.3);
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+    background-color: #c82333;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* File card improvements */
+.fichier-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.fichier-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.fichier-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 12px;
+}
+
+.fichier-header i {
+    font-size: 24px;
+    color: #6c757d;
+    min-width: 24px;
+}
+
+.fichier-info h4 {
+    margin: 0;
+    color: #495057;
+    font-size: 16px;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.fichier-info .fichier-type {
+    margin: 4px 0 0 0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.fichier-details {
+    margin-bottom: 12px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row .label {
+    font-weight: 500;
+    color: #495057;
+    flex-shrink: 0;
+}
+
+.detail-row .value {
+    color: #6c757d;
+    text-align: right;
+    margin-left: 12px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .fichiers-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fichier-actions {
+        flex-direction: column;
+    }
+
+    .fichier-actions .btn {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .detail-row .value {
+        text-align: left;
+        margin-left: 0;
+    }
+}
+
+/* Loading states */
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Success/Error messages */
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    border: 1px solid #c3e6cb;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    border: 1px solid #f5c6cb;
+}
+
+/* File type specific colors */
+.fichier-header .fa-file-pdf {
+    color: #dc3545;
+}
+
+.fichier-header .fa-file-image {
+    color: #28a745;
+}
+
+.fichier-header .fa-file-word {
+    color: #007bff;
+}
+
+.fichier-header .fa-file-excel {
+    color: #28a745;
+}
+
+.fichier-header .fa-file-alt {
+    color: #6c757d;
+}

@@ -3,6 +3,7 @@ import { HttpClient, HttpEventType, HttpHeaders, HttpRequest } from '@angular/co
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { FichierMedical } from '../models/fichier-medical.model';
 
 export interface FileUploadData {
   file: File;
@@ -37,9 +38,11 @@ export interface FileInfo {
   providedIn: 'root'
 })
 export class FileService {
+  //private readonly apiUrl = `${environment.apiUrl}/api/FichierMedical` || `${environment.apiUrl}/api/files`;
+  //private readonly apiUrl = `${environment.apiUrl}/api/FichierMedical`;
   private readonly apiUrl = `${environment.apiUrl}/api/file`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Upload a single file with metadata
@@ -71,7 +74,7 @@ export class FileService {
   uploadFile(formData: FormData): Observable<any> {
     // Don't set Content-Type header - let the browser set it automatically for FormData
     // This ensures proper multipart/form-data boundary is set
-    return this.http.post(`${this.apiUrl}/upload`, formData, {
+    return this.http.post(`https://localhost:4000/api/file/upload`, formData, {
       reportProgress: true,
       observe: 'events'
     });
@@ -135,19 +138,16 @@ export class FileService {
   }
 */
   /**
-   * Download a file by its path
+   * Download a file by its id
    */
-  downloadFile(filePath: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/download`, {
-      params: { filePath },
+  downloadFileById(fileId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/download/${fileId}`, {
       responseType: 'blob'
-    }).pipe(
-      catchError(this.handleError)
-    );
+    });
   }
 
   /**
-   * Get file info by ID
+   * Get file info by ID (not used method)
    */
   getFileInfo(fileId: string): Observable<FileInfo> {
     return this.http.get<FileInfo>(`${this.apiUrl}/${fileId}`)
@@ -157,7 +157,7 @@ export class FileService {
   }
 
   /**
-   * Get files by department
+   * Get files by department (not used method)
    */
   getFilesByDepartment(departmentId: string): Observable<FileInfo[]> {
     return this.http.get<FileInfo[]>(`${this.apiUrl}/department/${departmentId}`)
@@ -166,10 +166,13 @@ export class FileService {
       );
   }
 
+
+
+
   /**
-   * Delete a file
-   */
-  deleteFile(fileId: string): Observable<any> {
+ * Delete a file by its ID
+ */
+  deleteFileById(fileId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${fileId}`)
       .pipe(
         catchError(this.handleError)
@@ -177,7 +180,7 @@ export class FileService {
   }
 
   /**
-   * Get file by relative path (for display/preview)
+   * Get file by relative path (for display/preview) --- (not used method)
    */
   getFileByPath(relativePath: string): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/view`, {
@@ -274,5 +277,188 @@ export class FileService {
     
     console.error('FileService Error:', error);
     return throwError(() => new Error(errorMessage));
+  }
+
+
+
+  getAllFiles(): Observable<FichierMedical[]> {
+     return this.http.get<FichierMedical[]>(`${this.apiUrl}`);
+  }
+  
+
+  /**
+   * Preview a file by its id (for in-browser viewing)
+   */
+  previewFileById(fileId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/preview/${fileId}`, {
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Accept': '*/*'
+      })
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Open file in new tab/window for preview with better error handling
+   */
+  openFilePreview(fileId: number, fileName?: string): void {
+    console.log(`Attempting to preview file ID: ${fileId}, Name: ${fileName}`);
+
+    this.previewFileById(fileId).subscribe({
+      next: (blob: Blob) => {
+        console.log(`File blob received, size: ${blob.size}, type: ${blob.type}`);
+
+        if (blob.size === 0) {
+          console.error('Received empty file blob');
+          this.showErrorMessage('Le fichier est vide ou n\'a pas pu être chargé.');
+          return;
+        }
+
+        const url = window.URL.createObjectURL(blob);
+        console.log(`Created object URL: ${url}`);
+
+        // Try to open in new tab/window
+        const newWindow = window.open('', '_blank');
+
+        if (newWindow) {
+          // For better compatibility, navigate to the blob URL
+          newWindow.location.href = url;
+
+          // Set a meaningful title if fileName is provided
+          if (fileName) {
+            // Wait a bit for the page to load before setting title
+            setTimeout(() => {
+              try {
+                newWindow.document.title = fileName;
+              } catch (e) {
+                console.warn('Could not set window title:', e);
+              }
+            }, 500);
+          }
+
+          // Clean up the URL after a delay
+          setTimeout(() => {
+            window.URL.revokeObjectURL(url);
+            console.log('Object URL revoked');
+          }, 10000); // Increased delay to ensure file loads
+        } else {
+          // Fallback if popup is blocked
+          console.log('Popup blocked, using fallback method');
+          this.createTempLinkAndClick(url, fileName || 'fichier');
+
+          setTimeout(() => {
+            window.URL.revokeObjectURL(url);
+          }, 1000);
+        }
+      },
+      error: (err) => {
+        console.error('Preview failed:', err);
+        this.showErrorMessage('Impossible d\'ouvrir le fichier en aperçu.');
+
+        // Fallback to download
+        console.log('Attempting download fallback');
+        this.downloadFileById(fileId).subscribe({
+          next: (blob: Blob) => {
+            console.log('Download fallback successful');
+            this.triggerDownload(blob, fileName || 'fichier_medical');
+          },
+          error: (downloadErr) => {
+            console.error('Download fallback also failed:', downloadErr);
+            this.showErrorMessage('Impossible de télécharger ou de prévisualiser le fichier.');
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Create temporary link and trigger click
+   */
+  private createTempLinkAndClick(url: string, fileName: string): void {
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.style.display = 'none';
+
+    // Add to DOM temporarily
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  /**
+   * Trigger file download
+   */
+  private triggerDownload(blob: Blob, fileName: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.style.display = 'none';
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    setTimeout(() => {
+      window.URL.revokeObjectURL(url);
+    }, 100);
+  }
+
+  /**
+   * Show error message to user (you can replace this with your notification service)
+   */
+  private showErrorMessage(message: string): void {
+    // You can replace this with a toast notification service
+    alert(message);
+  }
+
+  /**
+   * Check if file type is previewable in browser
+   */
+  isPreviewableFileType(fileName: string): boolean {
+    const extension = fileName.toLowerCase().split('.').pop();
+    const previewableTypes = [
+      'pdf', 'txt', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp',
+      'mp4', 'webm', 'ogg', 'mp3', 'wav', 'html', 'htm', 'css', 'js', 'json', 'xml'
+    ];
+    return previewableTypes.includes(extension || '');
+  }
+
+  /**
+   * Get human-readable file type description
+   */
+  getFileTypeDescription(fileName: string): string {
+    const extension = fileName.toLowerCase().split('.').pop();
+
+    const typeDescriptions: { [key: string]: string } = {
+      'pdf': 'Document PDF',
+      'jpg': 'Image JPEG',
+      'jpeg': 'Image JPEG',
+      'png': 'Image PNG',
+      'gif': 'Image GIF',
+      'bmp': 'Image Bitmap',
+      'svg': 'Image vectorielle',
+      'webp': 'Image WebP',
+      'mp4': 'Vidéo MP4',
+      'webm': 'Vidéo WebM',
+      'ogg': 'Média OGG',
+      'mp3': 'Audio MP3',
+      'wav': 'Audio WAV',
+      'txt': 'Fichier texte',
+      'html': 'Page web',
+      'htm': 'Page web',
+      'doc': 'Document Word',
+      'docx': 'Document Word',
+      'xls': 'Feuille Excel',
+      'xlsx': 'Feuille Excel',
+      'ppt': 'Présentation PowerPoint',
+      'pptx': 'Présentation PowerPoint'
+    };
+
+    return typeDescriptions[extension || ''] || 'Fichier';
   }
 }
